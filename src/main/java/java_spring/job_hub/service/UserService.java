@@ -14,6 +14,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -74,6 +75,7 @@ public class UserService  {
         return userMapper.toUserResponse(userReponsetory.save(user));
     }
 
+
     public UserResponse getUser(String id) {
 //        if(S)
         return userMapper.toUserResponse(userReponsetory.findById(id).orElseThrow(
@@ -81,6 +83,7 @@ public class UserService  {
         ));
     }
 
+    @PreAuthorize("hasAuthority('admin')")
     public List<UserResponse> getAllUsers() {
         return userReponsetory.findAll().stream().map(userMapper::toUserResponse).toList();
     }

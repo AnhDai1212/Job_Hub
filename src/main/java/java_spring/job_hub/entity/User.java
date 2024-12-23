@@ -16,6 +16,7 @@ import java.util.Set;
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@Builder
 public class User {
     @Id
     @GeneratedValue (strategy = GenerationType.UUID)

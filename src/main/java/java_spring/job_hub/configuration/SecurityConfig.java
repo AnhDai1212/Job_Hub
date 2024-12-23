@@ -36,17 +36,13 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder(10);
     }
 
-//    @Bean
-//    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-//        return authenticationConfiguration.getAuthenticationManager();
-//    }
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
 //                .csrf(csrf -> csrf.disable()) // Vô hiệu hóa CSRF. khi ko su dung jwt
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(HttpMethod.POST, PUBLIC_ENPOINTS).permitAll()
-//                        .requestMatchers(HttpMethod.GET, PUBLIC_ENPOINTS).permitAll()
+                        .requestMatchers(HttpMethod.GET, "/users").hasAuthority("ADMIN")
                         .anyRequest().authenticated()
                 );
         httpSecurity.oauth2ResourceServer(oauth2 ->
