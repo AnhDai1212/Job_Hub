@@ -5,17 +5,15 @@ import java_spring.job_hub.dto.request.UserUpdateRequest;
 import java_spring.job_hub.dto.response.UserResponse;
 import java_spring.job_hub.entity.Role;
 import java_spring.job_hub.entity.User;
-import java_spring.job_hub.enums.Roles;
+import java_spring.job_hub.exception.AppException;
+import java_spring.job_hub.exception.ErrorCode;
 import java_spring.job_hub.mapper.UserMapper;
 import java_spring.job_hub.repository.RoleRepository;
-import java_spring.job_hub.repository.UserReponsetory;
+import java_spring.job_hub.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -29,21 +27,22 @@ import java.util.Set;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserService  {
 
-    UserReponsetory userReponsetory;
+    UserRepository userReponsetory;
     UserMapper userMapper;
     PasswordEncoder passwordEncoder;
     RoleRepository roleRepository;
 
 
+
     public UserResponse createUser(UserCreationRequest request) {
         if(userReponsetory.existsByUsername(request.getUsername())){
-            throw new RuntimeException("User Exits");
+            throw new RuntimeException(ErrorCode.USER_NOT_EXISTED.getMessage());
         }
         User user = userMapper.toUser(request);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         Role role = roleRepository.findByName("USER")
-                .orElseThrow(() -> new RuntimeException("Role 'USER' not found!"));
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         Set<Role> roles = new HashSet<>();
         roles.add(role);
@@ -54,7 +53,7 @@ public class UserService  {
 
     public UserResponse updateUser(String id,UserUpdateRequest request) {
         User user = userReponsetory.findById(id).orElseThrow(
-                () -> new RuntimeException("User not found")
+                () -> new AppException(ErrorCode.USER_NOT_EXISTED)
         );
 
         userMapper.updateUser(user, request);
@@ -76,8 +75,9 @@ public class UserService  {
     }
 
     public UserResponse getUser(String id) {
+//        if(S)
         return userMapper.toUserResponse(userReponsetory.findById(id).orElseThrow(
-                () -> new RuntimeException("User not found")
+                () -> new AppException(ErrorCode.USER_NOT_EXISTED)
         ));
     }
 
@@ -88,7 +88,7 @@ public class UserService  {
 
     public void deleteUser(String id){
         User user = userReponsetory.findById(id).orElseThrow(
-                () -> new RuntimeException("User not found")
+                () -> new RuntimeException(ErrorCode.USER_NOT_EXISTED.getMessage())
         );
         userReponsetory.deleteById(id);
     }

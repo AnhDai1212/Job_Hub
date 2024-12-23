@@ -6,13 +6,10 @@ import java_spring.job_hub.dto.request.UserUpdateRequest;
 import java_spring.job_hub.dto.response.ApiResponse;
 import java_spring.job_hub.dto.response.UserResponse;
 import java_spring.job_hub.entity.User;
-import java_spring.job_hub.repository.UserReponsetory;
+import java_spring.job_hub.repository.UserRepository;
 import java_spring.job_hub.service.UserService;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,7 +19,7 @@ import java.util.List;
 @Slf4j
 @AllArgsConstructor
 public class UserController {
-    private UserReponsetory userReponsetory;
+    private UserRepository userReponsetory;
     private UserService userService;
 
     @PostMapping

@@ -1,4 +1,4 @@
-package java_spring.job_hub.dto.response;
+package java_spring.job_hub.dto.request;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -8,8 +8,7 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Response {
-    int code;
-
-    boolean status;
+public class PermissionRequest {
+    String name;
+    String description;
 }
