@@ -7,6 +7,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -23,9 +24,10 @@ import javax.crypto.spec.SecretKeySpec;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
-    private final String [] PUBLIC_ENPOINTS = {
-            "/users",  "/auth/introspect","auth/token"
+    private final String [] PUBLIC_ENDPOINTS = {
+            "/users",  "/auth/introspect","/auth/token"
     };
 
     @Value("${jwt.signerkey}")
@@ -41,8 +43,9 @@ public class SecurityConfig {
         httpSecurity
 //                .csrf(csrf -> csrf.disable()) // Vô hiệu hóa CSRF. khi ko su dung jwt
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers(HttpMethod.POST, PUBLIC_ENPOINTS).permitAll()
-                        .requestMatchers(HttpMethod.GET, "/users").hasAuthority("ADMIN")
+                                .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS).permitAll()
+//                                .requestMatchers(HttpMethod.POST, "/auth/token").permitAll()
+//                        .requestMatchers(HttpMethod.GET, "/users").hasAuthority("ADMIN")
                         .anyRequest().authenticated()
                 );
         httpSecurity.oauth2ResourceServer(oauth2 ->
@@ -50,7 +53,7 @@ public class SecurityConfig {
                                 .jwtAuthenticationConverter(jwtAuthenticationConverter()) // chuyen doi cac doi tuong trong jwt thanh mot doi tuong authenticated trong spring security
 
                         )
-                        .authenticationEntryPoint(new JwtAuthenticationEntryPoint())    // Xu ly error xay ra tren tang filler chua xuong toi service
+                                .authenticationEntryPoint(new JwtAuthenticationEntryPoint())    // Xu ly error xay ra tren tang filler chua xuong toi service
 
         );
         httpSecurity.csrf(AbstractHttpConfigurer::disable);

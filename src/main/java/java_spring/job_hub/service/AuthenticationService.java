@@ -70,7 +70,7 @@ public class AuthenticationService {
         var user = userRepository.findUserByUsername(request.getUsername()).orElseThrow(()-> new AppException(ErrorCode.USER_NOT_EXISTED) );
         boolean authenticated = passwordEncoder.matches(request.getPassword(), user.getPassword());
         if(!authenticated) {
-            throw new AppException(ErrorCode.AUTHENTICATED);
+            throw new AppException(ErrorCode.PASSWORD_INVALID);
         }
 
         var token = generateToken(user);

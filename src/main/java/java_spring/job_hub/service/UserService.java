@@ -83,7 +83,7 @@ public class UserService  {
         ));
     }
 
-    @PreAuthorize("hasAuthority('admin')")
+    @PreAuthorize("hasRole('ADMIN')")
     public List<UserResponse> getAllUsers() {
         return userReponsetory.findAll().stream().map(userMapper::toUserResponse).toList();
     }
