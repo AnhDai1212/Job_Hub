@@ -13,6 +13,7 @@ import java_spring.job_hub.repository.RoleRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,47 +22,48 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@Slf4j
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class RoleService{
     RoleRepository roleRepository;
     RoleMapper roleMapper;
     PermissionRepository permissionRepository;
 
-    ApiResponse<RoleResponse> createRole(RoleCreateRequest request){
+    public RoleResponse createRole(RoleCreateRequest request){
         var role = roleMapper.toRole(request);
         if(role == null) {
             throw new AppException(ErrorCode.ROLE_NOT_EXIST);
         }
         var permissions = permissionRepository.findAllById(request.getPermissions());
-        if(permissions.isEmpty()){
-            throw new AppException(ErrorCode.PERMISSION_NOT_EXIST);
-        }
+//        if(permissions.isEmpty()){
+//            throw new AppException(ErrorCode.PERMISSION_NOT_EXIST);
+//        }
 
         role.setPermissions(new HashSet<>(permissions));
         roleRepository.save(role);
-        return ApiResponse.<RoleResponse>builder()
-                .result(roleMapper.toRoleResponse(role))
-                .build();
+        return roleMapper.toRoleResponse(role);
     }
 
-    public ApiResponse<List<RoleResponse>> getAllRoles(){
+    public List<RoleResponse> getAllRoles(){
         var roles = roleRepository.findAll();
         if(roles.isEmpty()) {
             throw new AppException(ErrorCode.ROLE_NOT_EXIST);
         }
-        return ApiResponse.<List<RoleResponse>>builder()
-                .result(roleMapper.toRoleListResponse(roles))
-                .build();
+        return roleMapper.toRoleListResponse(roles);
+    }
+    // mot cach khac hay hon
+    public List<RoleResponse> getAll2() {
+        var roles = roleRepository.findAll();
+        return roles.stream()
+                        .map(roleMapper::toRoleResponse)
+                        .toList()
+               ;
     }
 
-    public ApiResponse<RoleResponse> deleteRole(String roleName) {
+    public void deleteRole(String roleName) {
         Role role = roleRepository.findByName(roleName).orElseThrow(
                 ()-> new AppException(ErrorCode.ROLE_NOT_EXIST)
         );
         roleRepository.delete(role);
-        return ApiResponse.<RoleResponse>builder()
-                .result(roleMapper.toRoleResponse(role))
-                .message("Role deleted successfully")
-                .build();
     }
 }

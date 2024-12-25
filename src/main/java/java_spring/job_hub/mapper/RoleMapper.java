@@ -12,8 +12,8 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface RoleMapper {
+    @Mapping(target = "permissions", ignore = true)  // tự động bỏ qua attribute permission khi mapper
     Role toRole(RoleCreateRequest request);
-
     RoleResponse toRoleResponse(Role role);
     List<RoleResponse> toRoleListResponse(List<Role> roles);
     @Mapping(ignore = true, target = "permissions")
