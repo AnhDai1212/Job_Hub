@@ -4,21 +4,29 @@ import jakarta.validation.Valid;
 import java_spring.job_hub.dto.request.UserCreationRequest;
 import java_spring.job_hub.dto.request.UserUpdateRequest;
 import java_spring.job_hub.dto.response.ApiResponse;
+import java_spring.job_hub.dto.response.RoleResponse;
 import java_spring.job_hub.dto.response.UserResponse;
+import java_spring.job_hub.entity.Role;
 import java_spring.job_hub.entity.User;
+import java_spring.job_hub.exception.AppException;
+import java_spring.job_hub.exception.ErrorCode;
+import java_spring.job_hub.repository.RoleRepository;
 import java_spring.job_hub.repository.UserRepository;
 import java_spring.job_hub.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/users")
 @Slf4j
 @AllArgsConstructor
 public class UserController {
+    private final RoleRepository roleRepository;
     private UserRepository userReponsetory;
     private UserService userService;
 
@@ -37,6 +45,15 @@ public class UserController {
                   .result(userService.updateUser(userId, request))
                   .build();
     }
+    @PutMapping("/{id}/roles")
+    public ApiResponse<UserResponse> updateUserRoles(@PathVariable String id, @RequestBody Map<String, List<String>> roleNames) {
+        System.out.println("Received API call for user ID: " + id + " with roleNames: " + roleNames.get("roleNames"));
+        return ApiResponse.<UserResponse>builder()
+                .result(userService.updateRole(id, roleNames.get("roleNames")))
+                .build();
+    }
+
+
     @GetMapping("/{userId}")
     ApiResponse<UserResponse> getUser(@PathVariable("userId") String userId) {
         return  ApiResponse.<UserResponse>builder()
@@ -65,5 +82,13 @@ public class UserController {
                 .message("Delete User success: " + user.getUsername())
                 .build();
     }
+
+
+//    @GetMapping("/{userId}")
+//    public ApiResponse<List<RoleResponse>> getRole(@PathVariable String userId) {
+//        return
+//    }
+
+
 
 }

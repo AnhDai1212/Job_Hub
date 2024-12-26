@@ -11,6 +11,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserResponse {
+    String id;
     String username;
 //    String password;
     String email;
