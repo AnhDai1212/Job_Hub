@@ -117,7 +117,7 @@ public class AuthenticationService {
                 stringJoiner.add("ROLE_" + role.getName());  // ROLE_ giup phan biet cac role va permission
                 if (!CollectionUtils.isEmpty(role.getPermissions()))
                     role.getPermissions()
-                            .forEach(permission -> stringJoiner.add(permission.getPermissionName()));
+                            .forEach(permission -> stringJoiner.add(permission.getName()));
             });
 
         return stringJoiner.toString();

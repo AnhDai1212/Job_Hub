@@ -37,13 +37,13 @@ public class UserService  {
 
     public UserResponse createUser(UserCreationRequest request) {
         if(userReponsetory.existsByUsername(request.getUsername())){
-            throw new RuntimeException(ErrorCode.USER_NOT_EXISTED.getMessage());
+            throw new RuntimeException(ErrorCode.USER_ALREADY_EXIST.getMessage());
         }
         User user = userMapper.toUser(request);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         Role role = roleRepository.findByName("USER")
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_EXIST));
 
         Set<Role> roles = new HashSet<>();
         roles.add(role);

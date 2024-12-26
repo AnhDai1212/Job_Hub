@@ -11,18 +11,19 @@ import java_spring.job_hub.repository.PermissionRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class PermissionService {
     PermissionRepository permissionRepository;
     PermissionMapper permissionMapper;
 
-    public PermissionResponse createPermissionResponse(PermissionRequest request) {
+    public PermissionResponse createPermission(PermissionRequest request) {
         Permission permission = permissionMapper.toPermission(request);
         return permissionMapper.toPermissionResponse(permissionRepository.save(permission));
     }
@@ -34,7 +35,7 @@ public class PermissionService {
     }
 
     public void deletePermision(String permisionName){
-        Permission permission = permissionRepository.findAllByPermissionName(permisionName).orElseThrow(
+        Permission permission = permissionRepository.findAllByName(permisionName).orElseThrow(
                 () -> new AppException(ErrorCode.PERMISSION_NOT_EXIST)
         );
         permissionRepository.deleteById(permisionName);

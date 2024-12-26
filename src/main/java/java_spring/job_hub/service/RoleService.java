@@ -34,7 +34,10 @@ public class RoleService{
         if(role == null) {
             throw new AppException(ErrorCode.ROLE_NOT_EXIST);
         }
+
         var permissions = permissionRepository.findAllById(request.getPermissions());
+        log.info("Permissions from request: {}", permissions);
+
 //        if(permissions.isEmpty()){
 //            throw new AppException(ErrorCode.PERMISSION_NOT_EXIST);
 //        }
