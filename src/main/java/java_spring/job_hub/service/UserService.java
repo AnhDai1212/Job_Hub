@@ -22,6 +22,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -45,7 +48,7 @@ public class UserService  {
         }
         User user = userMapper.toUser(request);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-
+        user.setCreateAt(new Date());
         Role role = roleRepository.findByName("USER")
                 .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_EXIST));
 
