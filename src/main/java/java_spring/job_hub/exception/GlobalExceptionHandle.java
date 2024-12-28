@@ -1,7 +1,10 @@
 package java_spring.job_hub.exception;
 
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintViolation;
 import java_spring.job_hub.dto.response.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.validator.cfg.context.Constrainable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -16,6 +19,8 @@ import java.util.Objects;
 @ControllerAdvice
 @Slf4j
 public class GlobalExceptionHandle {
+
+    private static final String MIN_ATTRIBUTE = "min";
 
     @ExceptionHandler(value = Exception.class)
     ResponseEntity<ApiResponse> handlingRuntimeException(RuntimeException exception){
@@ -55,14 +60,22 @@ public class GlobalExceptionHandle {
         );
     }
     //xảy ra khi dữ liệu đầu vào không hợp lệ, thường là trong quá trình validation
-    @ExceptionHandler(value = MethodArgumentNotValidException.class)
-    ResponseEntity<ApiResponse> handlingValidation(MethodArgumentNotValidException exception){
-        String enumKey = exception.getFieldError().getDefaultMessage();
+    @ExceptionHandler(value = MethodArgumentNotValidException.class)  //MethodArgumentNotValidException  sẽ bắt các kiệu ValidException
+    public ResponseEntity<ApiResponse> handlingValidation (MethodArgumentNotValidException exception) {
+        String enumkey = exception.getFieldError().getDefaultMessage();
 
         ErrorCode errorCode = ErrorCode.INVALID_KEY;
 
-        try {
-            errorCode = ErrorCode.valueOf(enumKey);
+        Map<String, Object> attributes = null;
+        try{
+            errorCode = ErrorCode.valueOf(enumkey);
+
+            var constrainViolation = exception.getBindingResult()
+                    .getAllErrors().getFirst().unwrap(ConstraintViolation.class);
+            attributes = constrainViolation.getConstraintDescriptor().getAttributes(); // lay cac param da truyen vao @constrain
+
+            log.info(attributes.toString());
+
         } catch (IllegalArgumentException e){
 
         }
@@ -70,11 +83,18 @@ public class GlobalExceptionHandle {
         ApiResponse apiResponse = new ApiResponse();
 
         apiResponse.setCode(errorCode.getCode());
-        apiResponse.setMessage(errorCode.getMessage());
+        apiResponse.setMessage(Objects.nonNull(attributes) ?
+                mapAttribute(errorCode.getMessage(),attributes) : errorCode.getMessage());
 
         return ResponseEntity.badRequest().body(apiResponse);
+
+//        return ResponseEntity.badRequest().body(Objects.requireNonNull(exception.getFieldError()).getDefaultMessage());
     }
 
+    private String mapAttribute(String message, Map<String,Object> attributes) {
+        String minValue = attributes.get(MIN_ATTRIBUTE).toString();
+        return message.replace("{"+ MIN_ATTRIBUTE + "}", minValue);
+    }
 
 
 }
