@@ -48,7 +48,7 @@ public class UserService  {
         }
         User user = userMapper.toUser(request);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setCreateAt(new Date());
+        user.setCreateAt(LocalDateTime.now());
         Role role = roleRepository.findByName("USER")
                 .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_EXIST));
 

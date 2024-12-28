@@ -6,6 +6,8 @@ import java_spring.job_hub.enums.Roles;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -27,8 +29,8 @@ public class User {
     String firstName;
     String lastName;
     String location;
-    Date dob;
-    Date createAt;
+    LocalDate dob;
+    LocalDateTime createAt;
     @ManyToMany
     Set<Role> roles;
 

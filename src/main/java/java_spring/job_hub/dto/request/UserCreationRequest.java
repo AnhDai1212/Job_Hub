@@ -1,10 +1,12 @@
 package java_spring.job_hub.dto.request;
 
 import jakarta.validation.constraints.Size;
+import java_spring.job_hub.validator.DobConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Data
@@ -19,6 +21,7 @@ public class UserCreationRequest {
     String firstName;
     String lastName;
     String location;
-    Date dob;
-    Date createAt;
+    @DobConstraint(min = 16, message = "INVALID_DOB")
+    LocalDate dob;
+    LocalDate createAt;
 }
