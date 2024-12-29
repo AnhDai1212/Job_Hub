@@ -16,6 +16,7 @@ import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.bridge.IMessage;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -85,6 +86,7 @@ public class UserService  {
     }
 
 
+    @PostAuthorize("returnObject.username == authentication.name")
     public UserResponse getUser(String id) {
 //        if(S)
         return userMapper.toUserResponse(userReponsetory.findById(id).orElseThrow(
