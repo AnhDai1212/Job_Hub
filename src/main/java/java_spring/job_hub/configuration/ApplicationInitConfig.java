@@ -1,5 +1,6 @@
 package java_spring.job_hub.configuration;
 
+import jakarta.annotation.PostConstruct;
 import java_spring.job_hub.entity.Role;
 import java_spring.job_hub.entity.User;
 import java_spring.job_hub.enums.Roles;
@@ -14,6 +15,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.HashSet;
+import java.util.TimeZone;
 
 @Configuration
 @RequiredArgsConstructor  // tu tao constructor khong cần autowired
@@ -22,9 +24,17 @@ public class ApplicationInitConfig {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @PostConstruct
+    public void init() {
+        // Thiết lập múi giờ mặc định
+        TimeZone.setDefault(TimeZone.getTimeZone("Asia/Ho_Chi_Minh"));
+        log.info("Default timezone set to Asia/Ho_Chi_Minh");
+    }
     @Bean
     ApplicationRunner applicationRunner(UserRepository userRepository,
                                         RoleRepository roleRepository) {  // Add một USER_ADMIN khi chạy lên lần dầu
+
         return args -> {
             if(userRepository.findUserByUsername("tuanhdai").isEmpty()){
                Role adminRole = roleRepository.findByName(Roles.ADMIN.name()).orElseThrow(
