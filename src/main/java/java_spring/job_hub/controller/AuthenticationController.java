@@ -3,6 +3,7 @@ package java_spring.job_hub.controller;
 import com.nimbusds.jose.JOSEException;
 import java_spring.job_hub.dto.request.AuthenticationRequest;
 import java_spring.job_hub.dto.request.IntrospecRequest;
+import java_spring.job_hub.dto.request.LogoutRequest;
 import java_spring.job_hub.dto.request.UserLoginRequest;
 import java_spring.job_hub.dto.response.ApiResponse;
 import java_spring.job_hub.dto.response.AuthResponse;
@@ -44,6 +45,12 @@ public class AuthenticationController {
         var result = authenticationService.introspect(request);
         return ApiResponse.<IntrospectResponse>builder()
                 .result(result)
+                .build();
+    }
+    @PostMapping("/logout")
+    public ApiResponse<Void> logout(@RequestBody LogoutRequest request) throws JOSEException, ParseException  {
+        authenticationService.logoutToken(request);
+        return ApiResponse.<Void>builder()
                 .build();
     }
 }

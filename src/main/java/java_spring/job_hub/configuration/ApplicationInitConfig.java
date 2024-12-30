@@ -14,6 +14,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.TimeZone;
 
@@ -29,7 +31,10 @@ public class ApplicationInitConfig {
     public void init() {
         // Thiết lập múi giờ mặc định
         TimeZone.setDefault(TimeZone.getTimeZone("Asia/Ho_Chi_Minh"));
-        log.info("Default timezone set to Asia/Ho_Chi_Minh");
+//        log.info("Default timezone set to Asia/Ho_Chi_Minh");
+        Calendar calendar = Calendar.getInstance();  // Sử dụng múi giờ hệ thống
+        Date date = calendar.getTime();
+        System.out.println("Time: " + date);
     }
     @Bean
     ApplicationRunner applicationRunner(UserRepository userRepository,

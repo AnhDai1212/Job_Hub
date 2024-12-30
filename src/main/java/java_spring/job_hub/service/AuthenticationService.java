@@ -1,5 +1,6 @@
 package java_spring.job_hub.service;
 
+import ch.qos.logback.core.joran.action.IncludeAction;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
@@ -7,11 +8,14 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import java_spring.job_hub.dto.request.AuthenticationRequest;
 import java_spring.job_hub.dto.request.IntrospecRequest;
+import java_spring.job_hub.dto.request.LogoutRequest;
 import java_spring.job_hub.dto.response.AuthenticationResponse;
 import java_spring.job_hub.dto.response.IntrospectResponse;
+import java_spring.job_hub.entity.InvalidatedToken;
 import java_spring.job_hub.entity.User;
 import java_spring.job_hub.exception.AppException;
 import java_spring.job_hub.exception.ErrorCode;
+import java_spring.job_hub.repository.InvalidatedTokenRepository;
 import java_spring.job_hub.repository.RoleRepository;
 import java_spring.job_hub.repository.UserRepository;
 import lombok.AccessLevel;
@@ -26,9 +30,11 @@ import org.springframework.util.CollectionUtils;
 
 import java.text.ParseException;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.StringJoiner;
+import java.util.UUID;
 
 import static org.hibernate.query.sqm.tree.SqmNode.log;
 
@@ -38,6 +44,7 @@ import static org.hibernate.query.sqm.tree.SqmNode.log;
 public class AuthenticationService {
     UserRepository userRepository;
     PasswordEncoder passwordEncoder;
+    InvalidatedTokenRepository invalidatedTokenRepository;
 
     @NonFinal
     @Value("${jwt.signerkey}")
@@ -48,20 +55,11 @@ public class AuthenticationService {
     public IntrospectResponse introspect(IntrospecRequest request) throws JOSEException, ParseException {
         var token = request.getToken();
 
-        JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes());
-
-        SignedJWT signedJWT = SignedJWT.parse(token);
-
-        Date expiriTime = signedJWT.getJWTClaimsSet().getExpirationTime();
-
-        var verified = signedJWT.verify(verifier);
+        verifyToken(token);
 
         return IntrospectResponse.builder()
-                .valid(
-                        verified && expiriTime.after(new Date())
-                )
+                .valid(true)
                 .build();
-
 
     }
 
@@ -90,6 +88,7 @@ public class AuthenticationService {
                 .expirationTime(new Date(
                         Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli()
                 ))
+                .jwtID(UUID.randomUUID().toString())
                 .claim("scope", buildScope(user))
                 .build();
 
@@ -121,6 +120,34 @@ public class AuthenticationService {
             });
 
         return stringJoiner.toString();
+    }
+
+    public void logoutToken(LogoutRequest request ) throws ParseException, JOSEException {
+        var signToken = verifyToken(request.getToken());
+
+        String jid = signToken.getJWTClaimsSet().getJWTID();
+        Date expireTime = signToken.getJWTClaimsSet().getExpirationTime();
+
+        InvalidatedToken invalidatedToken = InvalidatedToken.builder()
+                .id(jid)
+                .expiryTime(expireTime)
+                .build();
+        invalidatedTokenRepository.save(invalidatedToken);
+    }
+
+    private SignedJWT verifyToken(String token) throws ParseException, JOSEException {
+        JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes());
+
+        SignedJWT signedJWT = SignedJWT.parse(token);
+
+        Date expiriTime = signedJWT.getJWTClaimsSet().getExpirationTime();
+
+        var verified = signedJWT.verify(verifier);
+        if(!verified && expiriTime.after(new Date())) {
+            throw new AppException(ErrorCode.AUTHENTICATED);
+        }
+
+        return signedJWT;
     }
 
 }
