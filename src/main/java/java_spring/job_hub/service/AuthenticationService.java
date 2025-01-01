@@ -77,6 +77,7 @@ public class AuthenticationService {
                 .token(token)
                 .authenticated(true)
                 .build();
+
     }
     private String generateToken(User user) {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
@@ -134,16 +135,16 @@ public class AuthenticationService {
                 .build();
         invalidatedTokenRepository.save(invalidatedToken);
     }
-
+    //
     private SignedJWT verifyToken(String token) throws ParseException, JOSEException {
         JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes());
 
         SignedJWT signedJWT = SignedJWT.parse(token);
 
-        Date expiriTime = signedJWT.getJWTClaimsSet().getExpirationTime();
+        Date expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
 
         var verified = signedJWT.verify(verifier);
-        if(!verified && expiriTime.after(new Date())) {
+        if(!verified && expiryTime.after(new Date())) {
             throw new AppException(ErrorCode.AUTHENTICATED);
         }
 
