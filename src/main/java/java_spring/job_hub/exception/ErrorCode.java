@@ -13,7 +13,7 @@ public enum ErrorCode {
     USERNAME_INVALID(1004, "Username must be at {min} characters",HttpStatus.BAD_REQUEST),
     USER_NOT_EXISTED(1005, "User not existed",HttpStatus.NOT_FOUND),
     USER_ALREADY_EXIST(1005,"user already exists", HttpStatus.CONFLICT),
-    AUTHENTICATED(1006, "Authenticated",HttpStatus.UNAUTHORIZED),  //500 401
+    UNAUTHENTICATED(1006, "Unauthenticated",HttpStatus.UNAUTHORIZED),  //500 401
     UNAUTHORIZED(1007, "You do not have permission",HttpStatus.FORBIDDEN),  //403
     INVALID_DOB(1008, "Your age must bt at least {min}",HttpStatus.BAD_REQUEST),  //403
     ROLE_NOT_EXIST(1009,"Role not existed", HttpStatus.NOT_FOUND),

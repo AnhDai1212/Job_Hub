@@ -8,6 +8,7 @@ import com.nimbusds.jwt.SignedJWT;
 import java_spring.job_hub.dto.request.AuthenticationRequest;
 import java_spring.job_hub.dto.request.IntrospectRequest;
 import java_spring.job_hub.dto.request.LogoutRequest;
+import java_spring.job_hub.dto.request.RefreshRequest;
 import java_spring.job_hub.dto.response.AuthenticationResponse;
 import java_spring.job_hub.dto.response.IntrospectResponse;
 import java_spring.job_hub.entity.InvalidatedToken;
@@ -81,6 +82,7 @@ public class AuthenticationService {
                 .build();
 
     }
+    // Tao token bang user
     private String generateToken(User user) {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
 
@@ -137,7 +139,7 @@ public class AuthenticationService {
                 .build();
         invalidatedTokenRepository.save(invalidatedToken);
     }
-    //
+    // Giai ma token
     private SignedJWT verifyToken(String token) throws ParseException, JOSEException {
         JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes()); // tạo trình xác thực verifier
 
@@ -147,13 +149,39 @@ public class AuthenticationService {
 
         var verified = signedJWT.verify(verifier);
         if(!verified && expiryTime.after(new Date())) {  // Kiem tra tinh hop le cua token
-            throw new AppException(ErrorCode.AUTHENTICATED);
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
         }
         if(invalidatedTokenRepository.existsById(
                 signedJWT.getJWTClaimsSet().getJWTID()
-        ))throw new AppException(ErrorCode.AUTHENTICATED);
+        ))throw new AppException(ErrorCode.UNAUTHENTICATED);
 
-        return signedJWT;  // Doi tuong dai dien cho JWT co the lay ra cac thanh phan trong token (Header, Payload, Signature
+        return signedJWT;  // Doi tuong dai dien cho JWT co the lay ra cac thanh phan trong token (Header, Payload, Signature)
+    }
+
+    public AuthenticationResponse refreshToken(RefreshRequest request) throws ParseException, JOSEException {
+        var signedJWT = verifyToken(request.getToken());
+
+        var jid = signedJWT.getJWTClaimsSet().getJWTID();
+        var expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
+
+        InvalidatedToken invalidatedToken = InvalidatedToken.builder()
+                .id(jid)
+                .expiryTime(expiryTime)
+                .build();
+        invalidatedTokenRepository.save(invalidatedToken);
+
+        var username = signedJWT.getJWTClaimsSet().getSubject();
+
+        var user = userRepository.findUserByUsername(username).orElseThrow(
+                () -> new AppException(ErrorCode.UNAUTHENTICATED)
+        );
+
+        var token = generateToken(user);
+
+        return AuthenticationResponse.builder()
+                .authenticated(true)
+                .token(token)
+                .build();
     }
 
 }

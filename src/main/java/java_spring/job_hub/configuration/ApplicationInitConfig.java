@@ -24,6 +24,7 @@ import java.util.TimeZone;
 @Slf4j  // Sinh ra log
 public class ApplicationInitConfig {
 
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @PostConstruct
