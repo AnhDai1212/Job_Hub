@@ -1,5 +1,6 @@
 package java_spring.job_hub.configuration;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,8 +31,8 @@ public class SecurityConfig {
             "/users",  "/auth/introspect","/auth/token", "/roles", "/permissions", "/auth/logout"
     };
 
-    @Value("${jwt.signerkey}")
-    private String signerKey;
+    @Autowired
+    private CustomJwtDecoder customJwtDecoder;
 
     @Bean
     PasswordEncoder passwordEncoder() {
@@ -49,12 +50,10 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 );
         httpSecurity.oauth2ResourceServer(oauth2 ->
-                oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder())
+                oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(customJwtDecoder)
                                 .jwtAuthenticationConverter(jwtAuthenticationConverter()) // chuyen doi cac doi tuong trong jwt thanh mot doi tuong authenticated trong spring security
-
                         )
                                 .authenticationEntryPoint(new JwtAuthenticationEntryPoint())    // Xu ly error xay ra tren tang filler chua xuong toi service
-
         );
         httpSecurity.csrf(AbstractHttpConfigurer::disable);
 
@@ -71,15 +70,8 @@ public class SecurityConfig {
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
         return jwtAuthenticationConverter;
     }
-    // Chuyen doi va giai ma jwt bang Secretkey
-    @Bean
-    JwtDecoder jwtDecoder() {
-        SecretKeySpec secretKeySpec = new SecretKeySpec(signerKey.getBytes(), "HS512");
-        return NimbusJwtDecoder
-                .withSecretKey(secretKeySpec)
-                .macAlgorithm(MacAlgorithm.HS512)
-                .build();
-    }
+    // Chuyen doi va giai ma jwt bang secretKey
+
 
 
 

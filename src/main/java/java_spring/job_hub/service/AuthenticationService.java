@@ -1,13 +1,12 @@
 package java_spring.job_hub.service;
 
-import ch.qos.logback.core.joran.action.IncludeAction;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import java_spring.job_hub.dto.request.AuthenticationRequest;
-import java_spring.job_hub.dto.request.IntrospecRequest;
+import java_spring.job_hub.dto.request.IntrospectRequest;
 import java_spring.job_hub.dto.request.LogoutRequest;
 import java_spring.job_hub.dto.response.AuthenticationResponse;
 import java_spring.job_hub.dto.response.IntrospectResponse;
@@ -23,14 +22,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.text.ParseException;
 import java.time.Instant;
-import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.StringJoiner;
@@ -52,13 +49,18 @@ public class AuthenticationService {
     private final RoleRepository roleRepository;
 
 
-    public IntrospectResponse introspect(IntrospecRequest request) throws JOSEException, ParseException {
+    public IntrospectResponse introspect(IntrospectRequest request) throws JOSEException, ParseException {
         var token = request.getToken();
+        boolean isValid = true;
 
-        verifyToken(token);
+        try {
+            verifyToken(token);
+        }catch (Exception e){
+            isValid = false;
+        }
 
         return IntrospectResponse.builder()
-                .valid(true)
+                .valid(isValid)
                 .build();
 
     }
@@ -137,18 +139,21 @@ public class AuthenticationService {
     }
     //
     private SignedJWT verifyToken(String token) throws ParseException, JOSEException {
-        JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes());
+        JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes()); // tạo trình xác thực verifier
 
-        SignedJWT signedJWT = SignedJWT.parse(token);
+        SignedJWT signedJWT = SignedJWT.parse(token);  // Phan tich token
 
         Date expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
 
         var verified = signedJWT.verify(verifier);
-        if(!verified && expiryTime.after(new Date())) {
+        if(!verified && expiryTime.after(new Date())) {  // Kiem tra tinh hop le cua token
             throw new AppException(ErrorCode.AUTHENTICATED);
         }
+        if(invalidatedTokenRepository.existsById(
+                signedJWT.getJWTClaimsSet().getJWTID()
+        ))throw new AppException(ErrorCode.AUTHENTICATED);
 
-        return signedJWT;
+        return signedJWT;  // Doi tuong dai dien cho JWT co the lay ra cac thanh phan trong token (Header, Payload, Signature
     }
 
 }
