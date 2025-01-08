@@ -44,6 +44,7 @@ public class UserService  {
 
 
     public UserResponse createUser(UserCreationRequest request) {
+        log.info("Service : Create User");
         if(userReponsetory.existsByUsername(request.getUsername())){
             throw new AppException(ErrorCode.USER_ALREADY_EXIST);
         }

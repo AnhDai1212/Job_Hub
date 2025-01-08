@@ -11,5 +11,5 @@ spring:
 
 jwt:
   signerkey: BHkRPMOnl2ZV6Z0P+H3eHwuq2D1kZioQcox/ujMlfboZNBU/5E/PeJvavUmO2Z1w
-  valid-duration: 10  # thoi gian keo dai co hieu luc la 5s
-  refreshable-duration: 120 # thời gian có thể làm mới 120s
+  valid-duration: 3600  # thoi gian keo dai co hieu luc la 5s
+  refreshable-duration: 36000  # thời gian có thể làm mới 120s

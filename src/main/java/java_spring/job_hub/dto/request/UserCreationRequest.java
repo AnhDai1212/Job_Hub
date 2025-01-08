@@ -1,17 +1,21 @@
 package java_spring.job_hub.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Size;
 import java_spring.job_hub.validator.DobConstraint;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class UserCreationRequest {
     @Size(min = 3, message = "USERNAME_INVALID")
     String username;
@@ -23,5 +27,5 @@ public class UserCreationRequest {
     String location;
     @DobConstraint(min = 16, message = "INVALID_DOB")
     LocalDate dob;
-    LocalDate createAt;
+    LocalDateTime createAt;
 }
