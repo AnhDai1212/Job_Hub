@@ -88,6 +88,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
+            <version>3.3.5</version> <!-- Phiên bản Spring Boot -->
             <scope>test</scope>
         </dependency>
 <!--        kIỂM TRA XEM JWT CÓ HOẠT DONG KHONG-->
@@ -136,14 +137,15 @@
             <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-json</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>3.24.2</version> <!-- Phiên bản mới nhất tính đến 2025 -->
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 
@@ -185,7 +187,9 @@
                         <arg>-Amapstruct.verbose=true</arg>
                     </compilerArgs>
                 </configuration>
+
             </plugin>
+
 
         </plugins>
     </build>
