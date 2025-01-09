@@ -95,9 +95,6 @@ public class UserServiceTest {
         //WHEN
         var exception = assertThrows(AppException.class,
                 () -> userService.createUser(request));
-        //THEN
-        Assertions.assertEquals("035b3f35-0a06-449b-88f5-3142cda94c0a",userResponse.getId());
-        Assertions.assertEquals("abc61",userResponse.getUsername());
         // THEN
         Assertions.assertEquals(exception.getErrorCode().getCode(),1005);
     }
