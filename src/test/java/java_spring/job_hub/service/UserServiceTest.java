@@ -2,9 +2,12 @@ package java_spring.job_hub.service;
 
 import java_spring.job_hub.dto.request.UserCreationRequest;
 import java_spring.job_hub.dto.response.UserResponse;
+import java_spring.job_hub.entity.Role;
 import java_spring.job_hub.entity.User;
+import java_spring.job_hub.enums.Roles;
 import java_spring.job_hub.exception.AppException;
 import java_spring.job_hub.mapper.UserMapper;
+import java_spring.job_hub.repository.RoleRepository;
 import java_spring.job_hub.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
@@ -16,14 +19,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.TestPropertySource;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
+@TestPropertySource("/test.properties")
 public class UserServiceTest {
     @Autowired
     private UserService userService;
@@ -35,6 +42,10 @@ public class UserServiceTest {
     private UserResponse userResponse;
     private User user;
     private LocalDate dob;
+    @MockBean
+    private RoleRepository roleRepository;
+    private PasswordEncoder passwordEncoder;
+    private Role role;
 
     @BeforeEach
     void initData(){
@@ -97,6 +108,17 @@ public class UserServiceTest {
                 () -> userService.createUser(request));
         // THEN
         Assertions.assertEquals(exception.getErrorCode().getCode(),1005);
+    }
+    @Test
+    void createUser_roleNotFound_fail() {
+        // GIVEN
+        Mockito.when(roleRepository.findByName("USER")).thenReturn(Optional.empty());
+
+        // WHEN
+        var exception = assertThrows(AppException.class, () -> userService.createUser(request));
+
+        // THEN
+        Assertions.assertEquals(1009, exception.getErrorCode().getCode()); // Mã lỗi tương ứng cho ROLE_NOT_EXIST
     }
 
 }

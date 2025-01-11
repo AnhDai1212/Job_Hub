@@ -6,6 +6,7 @@ import java_spring.job_hub.dto.response.ApiResponse;
 import java_spring.job_hub.dto.response.UserResponse;
 import java_spring.job_hub.entity.Role;
 import java_spring.job_hub.entity.User;
+import java_spring.job_hub.enums.Roles;
 import java_spring.job_hub.exception.AppException;
 import java_spring.job_hub.exception.ErrorCode;
 import java_spring.job_hub.mapper.UserMapper;
@@ -53,11 +54,17 @@ public class UserService  {
         user.setCreateAt(LocalDateTime.now());
         Role role = roleRepository.findByName("USER")
                 .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_EXIST));
-
         Set<Role> roles = new HashSet<>();
         roles.add(role);
         user.setRoles(roles);
+
+//        Role roleUser = Role.builder()     //Dung cach nay khi su dung UnitTest hoac tam thoi bo di setRole
+//                .name(Roles.USER.name())
+//                .build();
 //
+//        HashSet<Role> roles = new HashSet<>();
+//        roles.add(roleUser);
+//        user.setRoles(roles);
 
         return  userMapper.toUserResponse(userReponsetory.save(user));
     }

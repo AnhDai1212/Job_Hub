@@ -13,6 +13,7 @@ import java.util.Set;
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@Builder
 public class Role {
     @Id
 //    @Enumerated(EnumType.STRING)
