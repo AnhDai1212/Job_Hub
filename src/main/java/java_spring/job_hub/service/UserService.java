@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.aspectj.bridge.IMessage;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -57,14 +58,6 @@ public class UserService  {
         Set<Role> roles = new HashSet<>();
         roles.add(role);
         user.setRoles(roles);
-
-//        Role roleUser = Role.builder()     //Dung cach nay khi su dung UnitTest hoac tam thoi bo di setRole
-//                .name(Roles.USER.name())
-//                .build();
-//
-//        HashSet<Role> roles = new HashSet<>();
-//        roles.add(roleUser);
-//        user.setRoles(roles);
 
         return  userMapper.toUserResponse(userReponsetory.save(user));
     }
@@ -107,6 +100,15 @@ public class UserService  {
         return userReponsetory.findAll().stream().map(userMapper::toUserResponse).toList();
     }
 
+    public UserResponse getMyInfo() {
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+
+        User user = userReponsetory.findUserByUsername(name).orElseThrow(
+                () -> new  AppException(ErrorCode.USER_NOT_EXISTED)
+        );
+        return userMapper.toUserResponse(user);
+    }
 
     public void deleteUser(String id){
         User user = userReponsetory.findById(id).orElseThrow(
@@ -114,6 +116,8 @@ public class UserService  {
         );
         userReponsetory.deleteById(id);
     }
+
+
 
 
     public UserResponse updateRole(String id, List<String> roleNames) {

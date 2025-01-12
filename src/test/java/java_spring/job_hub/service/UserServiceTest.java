@@ -20,6 +20,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.TestPropertySource;
 
 import java.time.LocalDate;
@@ -89,8 +90,12 @@ public class UserServiceTest {
     @Test
     void createUser_validRequest_success() {
         //GIVEN
+        Role roleUser = new Role();
+        roleUser.setName("USER");
+
         Mockito.when(userRepository.existsByUsername(ArgumentMatchers.anyString())).thenReturn(false);
         Mockito.when(userRepository.save(ArgumentMatchers.any())).thenReturn(user);
+        Mockito.when(roleRepository.findByName("USER")).thenReturn(Optional.of(roleUser)); // Giả lập role USER
         //WHEN
         var response = userService.createUser(request);
         //THEN
@@ -119,6 +124,25 @@ public class UserServiceTest {
 
         // THEN
         Assertions.assertEquals(1009, exception.getErrorCode().getCode()); // Mã lỗi tương ứng cho ROLE_NOT_EXIST
+    }
+    @Test
+    @WithMockUser(username = "abc61")
+    void getInfo_valid_success() {
+        //GIVEN
+        Mockito.when(userRepository.findUserByUsername(ArgumentMatchers.anyString())).thenReturn(Optional.of(user));
+        //WHEN
+        var response = userService.getMyInfo();
+        //THEN
+        Assertions.assertEquals(response.getUsername(),"abc61" );
+
+    }
+    @Test
+    @WithMockUser(username = "abc61")
+    void getInfo_userNotFound_error () {
+        Mockito.when(userRepository.findUserByUsername(ArgumentMatchers.anyString())).thenReturn(Optional.ofNullable(null));
+        var exception = assertThrows(AppException.class,
+                () -> userService.getMyInfo());
+        Assertions.assertEquals(1005, exception.getErrorCode().getCode());
     }
 
 }
