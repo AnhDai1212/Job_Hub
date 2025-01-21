@@ -1,12 +1,12 @@
 package java_spring.job_hub.dto.request;
 
+import java.time.LocalDate;
+import java.util.List;
+
 import jakarta.validation.constraints.Size;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDate;
-import java.util.Date;
-import java.util.List;
 
 @Data
 @Builder
@@ -16,12 +16,12 @@ import java.util.List;
 public class UserUpdateRequest {
     @Size(min = 8)
     String password;
+
     String email;
     String firstName;
     String lastName;
     String location;
     LocalDate dob;
-//    Date createAt;
+    //    Date createAt;
     List<String> roles;
 }
-

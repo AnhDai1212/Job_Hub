@@ -1,11 +1,12 @@
 package java_spring.job_hub.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java_spring.job_hub.dto.request.UserCreationRequest;
 import java_spring.job_hub.dto.response.UserResponse;
 import java_spring.job_hub.service.UserService;
-import lombok.extern.slf4j.Slf4j;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -20,9 +21,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
+import lombok.extern.slf4j.Slf4j;
 
 @SpringBootTest
 @Slf4j
@@ -40,9 +42,10 @@ public class UserControllerTest { // test viet cho userController
     private UserResponse userResponse;
     private LocalDate dob;
     LocalDateTime createAt;
+
     @BeforeEach
-    void initData(){
-        dob = LocalDate.of(2003,2,12);
+    void initData() {
+        dob = LocalDate.of(2003, 2, 12);
 
         DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
         LocalDateTime createAt = LocalDateTime.parse("2025-01-05T00:40:30.8965341", formatter);
@@ -67,6 +70,7 @@ public class UserControllerTest { // test viet cho userController
                 .createAt(createAt)
                 .build();
     }
+
     @Test
     void createUser_validRequest_success() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -74,16 +78,15 @@ public class UserControllerTest { // test viet cho userController
 
         String content = objectMapper.writeValueAsString(request);
 
-        Mockito.when(userService.createUser(ArgumentMatchers.any()))
-                .thenReturn(userResponse);
+        Mockito.when(userService.createUser(ArgumentMatchers.any())).thenReturn(userResponse);
 
-        mockMvc.perform(MockMvcRequestBuilders
-                        .post("/users")
+        mockMvc.perform(MockMvcRequestBuilders.post("/users")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(content))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("code").value(1000));
-//                .andExpect(MockMvcResultMatchers.jsonPath("result.id").value("035b3f35-0a06-449b-88f5-3142cda94c0"));
+        //
+        // .andExpect(MockMvcResultMatchers.jsonPath("result.id").value("035b3f35-0a06-449b-88f5-3142cda94c0"));
     }
 
     @Test
@@ -93,17 +96,11 @@ public class UserControllerTest { // test viet cho userController
         request.setUsername("ad");
         String content = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(MockMvcRequestBuilders
-                        .post("/users")
+        mockMvc.perform(MockMvcRequestBuilders.post("/users")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(content))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("code").value(1004))
-                .andExpect(MockMvcResultMatchers.jsonPath("message").value("Username must be at 3 characters"))
-        ;
-
+                .andExpect(MockMvcResultMatchers.jsonPath("message").value("Username must be at 3 characters"));
     }
-
-
-
 }

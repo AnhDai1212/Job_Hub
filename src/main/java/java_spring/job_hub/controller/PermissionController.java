@@ -1,19 +1,17 @@
 package java_spring.job_hub.controller;
 
+import java.util.List;
 import java_spring.job_hub.dto.request.PermissionRequest;
-import java_spring.job_hub.dto.request.RoleCreateRequest;
 import java_spring.job_hub.dto.response.ApiResponse;
 import java_spring.job_hub.dto.response.PermissionResponse;
-import java_spring.job_hub.dto.response.RoleResponse;
 import java_spring.job_hub.service.PermissionService;
-import java_spring.job_hub.service.RoleService;
+
+import org.springframework.web.bind.annotation.*;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/permissions")
@@ -36,6 +34,7 @@ public class PermissionController {
                 .result(permissionService.getAll())
                 .build();
     }
+
     @DeleteMapping("/{permission}")
     ApiResponse<Void> deleteRole(@PathVariable String permission) {
         permissionService.deletePermision(permission);

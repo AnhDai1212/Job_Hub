@@ -11,5 +11,4 @@ import lombok.experimental.FieldDefaults;
 public class AuthResponse {
     String description;
     boolean status;
-
 }

@@ -1,10 +1,12 @@
 package java_spring.job_hub.entity;
-import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
 
 import java.util.Date;
 import java.util.List;
+
+import jakarta.persistence.*;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -16,6 +18,7 @@ public class Companies {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer companyId;
+
     String companyName;
     String location;
     String webSite;
@@ -37,6 +40,4 @@ public class Companies {
     @OneToOne()
     @JoinColumn(name = "userId")
     User user;
-
-
 }

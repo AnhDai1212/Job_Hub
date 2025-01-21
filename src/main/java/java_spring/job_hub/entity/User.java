@@ -1,16 +1,14 @@
 package java_spring.job_hub.entity;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import jakarta.persistence.*;
-import java_spring.job_hub.enums.Roles;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
+
+import jakarta.persistence.*;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,8 +19,9 @@ import java.util.Set;
 @Builder
 public class User {
     @Id
-    @GeneratedValue (strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.UUID)
     String id;
+
     String username;
     String password;
     String email;
@@ -31,6 +30,7 @@ public class User {
     String location;
     LocalDate dob;
     LocalDateTime createAt;
+
     @ManyToMany
     Set<Role> roles;
 
@@ -54,5 +54,4 @@ public class User {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     List<Notifications> notificationsList;
-
 }

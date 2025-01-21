@@ -1,9 +1,8 @@
 package java_spring.job_hub.entity;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -16,5 +15,6 @@ import lombok.experimental.FieldDefaults;
 public class Permission {
     @Id
     String name;
+
     String description;
 }

@@ -1,29 +1,20 @@
 package java_spring.job_hub.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java_spring.job_hub.dto.request.UserCreationRequest;
 import java_spring.job_hub.dto.response.UserResponse;
-import java_spring.job_hub.entity.Role;
-import java_spring.job_hub.repository.RoleRepository;
-import java_spring.job_hub.service.UserService;
-import lombok.extern.slf4j.Slf4j;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatchers;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -31,9 +22,10 @@ import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
+import lombok.extern.slf4j.Slf4j;
 
 @SpringBootTest
 @Slf4j
@@ -42,8 +34,7 @@ import java.time.format.DateTimeFormatter;
 public class UserControllerIntegrationTest { // test viet cho userController
 
     @Container
-        static final MySQLContainer<?> MY_SQL_CONTAINER = new MySQLContainer<>("mysql:latest");
-
+    static final MySQLContainer<?> MY_SQL_CONTAINER = new MySQLContainer<>("mysql:latest");
 
     @DynamicPropertySource
     static void configureDtasource(DynamicPropertyRegistry registry) {
@@ -52,19 +43,20 @@ public class UserControllerIntegrationTest { // test viet cho userController
         registry.add("spring.datasource.password", MY_SQL_CONTAINER::getPassword);
         registry.add("spring.datasource.driverClassName", () -> "com.mysql.cj.jdbc.Driver");
         registry.add("spring.jpa.hibernate.ddl-auto", () -> "update");
-
     }
 
     @Autowired
     private MockMvc mockMvc;
+
     private UserCreationRequest request;
     private UserResponse userResponse;
     private LocalDate dob;
     LocalDateTime createAt;
-    @BeforeEach
-    void initData(){
 
-        dob = LocalDate.of(2003,2,12);
+    @BeforeEach
+    void initData() {
+
+        dob = LocalDate.of(2003, 2, 12);
 
         DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
         LocalDateTime createAt = LocalDateTime.parse("2025-01-05T00:40:30.8965341", formatter);
@@ -89,6 +81,7 @@ public class UserControllerIntegrationTest { // test viet cho userController
                 .createAt(createAt)
                 .build();
     }
+
     @Test
     @WithMockUser
     void createUser_validRequest_success() throws Exception {
@@ -97,23 +90,16 @@ public class UserControllerIntegrationTest { // test viet cho userController
 
         String content = objectMapper.writeValueAsString(request);
 
-
-        mockMvc.perform(MockMvcRequestBuilders
-                        .post("/users")
+        mockMvc.perform(MockMvcRequestBuilders.post("/users")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(content))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("code").value(1000))
-//                .andExpect(MockMvcResultMatchers.jsonPath("result.id").value("4cf01cee-bea2-47b0-bd05-2f7ecbca48ea"))
+                //
+                // .andExpect(MockMvcResultMatchers.jsonPath("result.id").value("4cf01cee-bea2-47b0-bd05-2f7ecbca48ea"))
                 .andExpect(MockMvcResultMatchers.jsonPath("result.username").value("abc61"))
                 .andExpect(MockMvcResultMatchers.jsonPath("result.firstName").value("John"))
                 .andExpect(MockMvcResultMatchers.jsonPath("result.lastName").value("Doe"))
-                .andExpect(MockMvcResultMatchers.jsonPath("result.location").value("New York"))
-            ;
+                .andExpect(MockMvcResultMatchers.jsonPath("result.location").value("New York"));
     }
-
-
-
-
-
 }

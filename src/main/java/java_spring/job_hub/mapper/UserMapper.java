@@ -4,11 +4,10 @@ import java_spring.job_hub.dto.request.UserCreationRequest;
 import java_spring.job_hub.dto.request.UserUpdateRequest;
 import java_spring.job_hub.dto.response.UserResponse;
 import java_spring.job_hub.entity.User;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
-
-import java.lang.annotation.Target;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
@@ -19,4 +18,3 @@ public interface UserMapper {
 
     UserResponse toUserResponse(User user);
 }
-

@@ -1,10 +1,11 @@
 package java_spring.job_hub.entity;
 
+import java.util.Date;
+
 import jakarta.persistence.*;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.Date;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -16,6 +17,7 @@ public class Favorites {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer favoritesId;
+
     Date createAt;
 
     @ManyToOne

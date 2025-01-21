@@ -1,12 +1,13 @@
 package java_spring.job_hub.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+
+import jakarta.persistence.*;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,6 +19,7 @@ public class Jobs {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer jobId;
+
     String title;
     String descriptions;
     String location;
@@ -26,19 +28,18 @@ public class Jobs {
     Double minSalary;
     Double maxSalary;
 
-    //fk
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {
-            CascadeType.PERSIST, CascadeType.MERGE,
-            CascadeType.DETACH, CascadeType .REFRESH
-    })
-    @JoinTable(
-            name = "job_tag_mapping"
-    )
+    // fk
+    @ManyToMany(
+            fetch = FetchType.LAZY,
+            cascade = {
+                CascadeType.PERSIST, CascadeType.MERGE,
+                CascadeType.DETACH, CascadeType.REFRESH
+            })
+    @JoinTable(name = "job_tag_mapping")
     Set<Job_tags> jobTags;
+
     @ManyToMany
-    @JoinTable(
-            name = "job_category_mapping"
-    )
+    @JoinTable(name = "job_category_mapping")
     Set<Job_categories> jobCategories;
 
     @OneToMany(mappedBy = "jobs", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -47,6 +48,4 @@ public class Jobs {
     @ManyToOne
     @JoinColumn(name = "companyId")
     Companies companies;
-
-
 }

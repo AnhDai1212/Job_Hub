@@ -1,10 +1,11 @@
 package java_spring.job_hub.entity;
 
+import java.util.Date;
+
 import jakarta.persistence.*;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.Date;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -16,11 +17,11 @@ public class Application_history {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer historyId;
+
     String status;
     Date dateAt;
 
     @ManyToOne
     @JoinColumn(name = "applicationId")
     Applications applications;
-
 }

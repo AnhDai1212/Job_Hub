@@ -1,9 +1,9 @@
 package java_spring.job_hub.entity;
+
 import jakarta.persistence.*;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.Date;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,6 +15,7 @@ public class Candidate_skills {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer skillId;
+
     String proficiencyLevel;
 
     @ManyToOne
