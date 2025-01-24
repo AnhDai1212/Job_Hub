@@ -92,8 +92,6 @@ public class GlobalExceptionHandle {
 
         return ResponseEntity.badRequest().body(apiResponse);
 
-        //        return
-        // ResponseEntity.badRequest().body(Objects.requireNonNull(exception.getFieldError()).getDefaultMessage());
     }
 
     private String mapAttribute(String message, Map<String, Object> attributes) {

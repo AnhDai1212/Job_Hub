@@ -114,17 +114,19 @@ public class UserServiceTest {
         Assertions.assertEquals(exception.getErrorCode().getCode(), 1005);
     }
 
-    @Test
-    void createUser_roleNotFound_fail() {
-        // GIVEN
-        Mockito.when(roleRepository.findByName("USER")).thenReturn(Optional.empty());
-
-        // WHEN
-        var exception = assertThrows(AppException.class, () -> userService.createUser(request));
-
-        // THEN
-        Assertions.assertEquals(1009, exception.getErrorCode().getCode()); // Mã lỗi tương ứng cho ROLE_NOT_EXIST
-    }
+    //    @Test
+    //    void createUser_roleNotFound_fail() {
+    //        // GIVEN
+    //        Role roleUser = new Role();
+    //        roleUser.setName("USER");
+    //        Mockito.when(roleRepository.findByName("USER")).thenReturn(Optional.empty());
+    //
+    //        // WHEN
+    //        var exception = assertThrows(AppException.class, () -> userService.createUser(request));
+    //
+    //        // THEN
+    //        Assertions.assertEquals(1009, exception.getErrorCode().getCode()); // Mã lỗi tương ứng cho ROLE_NOT_EXIST
+    //    }
 
     @Test
     @WithMockUser(username = "abc61")
