@@ -15,13 +15,20 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
     private static final String[] PUBLIC_ENDPOINTS = {
-        "/users", "/auth/introspect", "/auth/token", "/roles", "/permissions", "/auth/logout", "/auth/refresh"
+        "/users",
+        "/auth/introspect",
+        "/auth/token",
+        "/roles",
+        "/permissions",
+        "/auth/logout",
+        "/auth/refresh",
+        "/user-check/**"
     };
 
     private CustomJwtDecoder customJwtDecoder;
@@ -37,11 +44,13 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Thêm cấu hình CORS tại đây
                 //                .csrf(csrf -> csrf.disable()) // Vô hiệu hóa CSRF. khi ko su dung jwt
                 .authorizeHttpRequests(request -> request.requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS)
-                .permitAll()
-                //                                .requestMatchers(HttpMethod.POST, "/auth/token").permitAll()
-                //                        .requestMatchers(HttpMethod.GET, "/users").hasAuthority("ADMIN")
-                .anyRequest()
-                .authenticated());
+                        .permitAll()
+                        .requestMatchers(HttpMethod.GET, "/user-check/**")
+                        .permitAll()
+                        //                                .requestMatchers(HttpMethod.POST, "/auth/token").permitAll()
+                        //                        .requestMatchers(HttpMethod.GET, "/users").hasAuthority("ADMIN")
+                        .anyRequest()
+                        .authenticated());
         httpSecurity.oauth2ResourceServer(
                 oauth2 -> oauth2.jwt(
                                 jwtConfigurer -> jwtConfigurer
@@ -84,5 +93,4 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", config);
         return source;
     }
-
 }

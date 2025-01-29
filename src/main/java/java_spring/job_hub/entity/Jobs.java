@@ -1,6 +1,6 @@
 package java_spring.job_hub.entity;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
@@ -22,8 +22,10 @@ public class Jobs {
 
     String title;
     String descriptions;
+    String jobType;
+    LocalDate deadline;
     String location;
-    Date createAt;
+    LocalDate createAt;
     String status;
     Double minSalary;
     Double maxSalary;

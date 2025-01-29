@@ -1,8 +1,11 @@
 package java_spring.job_hub.configuration;
 
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.TimeZone;
+import java_spring.job_hub.entity.Role;
 import java_spring.job_hub.entity.User;
+import java_spring.job_hub.enums.Roles;
 import java_spring.job_hub.repository.RoleRepository;
 import java_spring.job_hub.repository.UserRepository;
 
@@ -47,10 +50,12 @@ public class ApplicationInitConfig {
 
         return args -> {
             if (userRepository.findUserByUsername("tuanhdai").isEmpty()) {
-                //               Role adminRole = roleRepository.findByName(Roles.ADMIN.name()).orElseThrow(
-                //                       () -> new RuntimeException("Role not found ADMIN"));
-                //                HashSet<Role> roles = new HashSet<>();
-                //                roles.add(adminRole);
+                Role adminRole = roleRepository
+                        .findByName(Roles.ADMIN.name())
+                        .orElseThrow(() -> new RuntimeException("Role not found ADMIN"));
+                HashSet<Role> roles = new HashSet<>();
+                roles.add(adminRole);
+                log.info("role: "+ roles);
 
                 //                Role adminRole = Role.builder()
                 //                        .name(Roles.ADMIN.name())
@@ -60,7 +65,7 @@ public class ApplicationInitConfig {
                 User user = User.builder()
                         .username("tuanhdai")
                         .password(passwordEncoder.encode("admin123"))
-                        //                        .roles(roles)
+                                                .roles(roles)
                         .build();
                 userRepository.save(user);
                 log.warn("Admin user has bean created with default password: admin, please change it!");

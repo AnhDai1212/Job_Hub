@@ -24,4 +24,6 @@ public class UserUpdateRequest {
     LocalDate dob;
     //    Date createAt;
     List<String> roles;
+    String gender;
+    String phone;
 }

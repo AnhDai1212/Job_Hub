@@ -6,6 +6,7 @@ import java_spring.job_hub.dto.request.IntrospectRequest;
 import java_spring.job_hub.service.AuthenticationService;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
@@ -20,7 +21,9 @@ public class CustomJwtDecoder implements JwtDecoder {
     private String signerKey;
 
     @Lazy
+    @Autowired
     private AuthenticationService authenticationService;
+
 
     private NimbusJwtDecoder nimbusJwtDecoder = null;
 

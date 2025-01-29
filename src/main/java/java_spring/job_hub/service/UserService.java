@@ -3,6 +3,7 @@ package java_spring.job_hub.service;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java_spring.job_hub.dto.request.UserCreationRequest;
 import java_spring.job_hub.dto.request.UserUpdateRequest;
 import java_spring.job_hub.dto.response.UserResponse;
@@ -44,11 +45,10 @@ public class UserService {
         User user = userMapper.toUser(request);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setCreateAt(LocalDateTime.now());
-        //        Role role = roleRepository.findByName("USER")
-        //                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_EXIST));
-        //        Set<Role> roles = new HashSet<>();
-        //        roles.add(role);
-        //        user.setRoles(roles);
+        Role role = roleRepository.findByName("USER").orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_EXIST));
+        Set<Role> roles = new HashSet<>();
+        roles.add(role);
+        user.setRoles(roles);
 
         return userMapper.toUserResponse(userReponsetory.save(user));
     }

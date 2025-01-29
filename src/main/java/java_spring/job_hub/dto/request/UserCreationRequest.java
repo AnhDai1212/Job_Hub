@@ -31,4 +31,6 @@ public class UserCreationRequest {
     LocalDate dob;
 
     LocalDateTime createAt;
+    String gender;
+    String phone;
 }

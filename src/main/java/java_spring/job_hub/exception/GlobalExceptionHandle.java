@@ -91,7 +91,6 @@ public class GlobalExceptionHandle {
                         : errorCode.getMessage());
 
         return ResponseEntity.badRequest().body(apiResponse);
-
     }
 
     private String mapAttribute(String message, Map<String, Object> attributes) {
