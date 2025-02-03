@@ -19,7 +19,8 @@ public enum ErrorCode {
     UNAUTHORIZED(1007, "You do not have permission", HttpStatus.FORBIDDEN), // 403
     INVALID_DOB(1008, "Your age must bt at least {min}", HttpStatus.BAD_REQUEST), // 403
     ROLE_NOT_EXIST(1009, "Role not existed", HttpStatus.NOT_FOUND),
-    PERMISSION_NOT_EXIST(1010, "Permission not existed", HttpStatus.NOT_FOUND);
+    PERMISSION_NOT_EXIST(1010, "Permission not existed", HttpStatus.NOT_FOUND),
+    UNVERIFIED_ACCOUNT(1011, "Unverified account !", HttpStatus.UNAUTHORIZED);
 
     ErrorCode(int code, String message, HttpStatusCode httpStatusCode) {
         this.code = code;

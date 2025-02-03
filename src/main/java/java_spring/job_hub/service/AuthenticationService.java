@@ -82,6 +82,9 @@ public class AuthenticationService {
         if (!password) {
             throw new AppException(ErrorCode.PASSWORD_IS_NOT_CORRECT);
         }
+        if (!user.getIsActivation()){
+            throw  new AppException(ErrorCode.UNVERIFIED_ACCOUNT);
+        }
 
         var token = generateToken(user);
 

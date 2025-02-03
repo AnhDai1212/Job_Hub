@@ -5,14 +5,20 @@ spring:
     url: jdbc:mysql://localhost:3307/job_hub
     username: root
     password: root
-#    url: jdbc:mysql://localhost:3306/job_hub
-#    username: dai
-#    password: 123
     driverClassName: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: tuanhdai12@gmail.com
+    password: sifj naaf oaad nfcj  # Kiểm tra xem có đúng App Password không!
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
 
 jwt:
   signerkey: BHkRPMOnl2ZV6Z0P+H3eHwuq2D1kZioQcox/ujMlfboZNBU/5E/PeJvavUmO2Z1w

@@ -49,13 +49,13 @@ public class ApplicationInitConfig {
         log.info("Init Application..........");
 
         return args -> {
-            if (userRepository.findUserByUsername("tuanhdai").isEmpty()) {
+            if (userRepository.findUserByUsername("admin").isEmpty()) {
                 Role adminRole = roleRepository
                         .findByName(Roles.ADMIN.name())
                         .orElseThrow(() -> new RuntimeException("Role not found ADMIN"));
                 HashSet<Role> roles = new HashSet<>();
                 roles.add(adminRole);
-                log.info("role: "+ roles);
+                log.info("role: " + roles);
 
                 //                Role adminRole = Role.builder()
                 //                        .name(Roles.ADMIN.name())
@@ -63,9 +63,10 @@ public class ApplicationInitConfig {
                 //                HashSet<Role> roles =  new HashSet<>();
                 //                roles.add(adminRole);
                 User user = User.builder()
-                        .username("tuanhdai")
+                        .username("admin")
                         .password(passwordEncoder.encode("admin123"))
-                                                .roles(roles)
+                        .roles(roles)
+                        .isActivation(true)
                         .build();
                 userRepository.save(user);
                 log.warn("Admin user has bean created with default password: admin, please change it!");

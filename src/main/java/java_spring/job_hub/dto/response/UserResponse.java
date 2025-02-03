@@ -26,4 +26,5 @@ public class UserResponse {
     String phone;
     LocalDateTime createAt;
     Set<RoleResponse> roles;
+    Boolean isActivation;
 }

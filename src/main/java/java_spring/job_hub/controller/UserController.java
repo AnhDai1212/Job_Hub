@@ -92,4 +92,10 @@ public class UserController {
     //        return
     //    }
 
+    @GetMapping("/activate")
+    ApiResponse<String> activation(@RequestParam String email, @RequestParam String activationCode) {
+        return ApiResponse.<String>builder()
+                .result(userService.activationAccount(email, activationCode))
+                .build();
+    }
 }

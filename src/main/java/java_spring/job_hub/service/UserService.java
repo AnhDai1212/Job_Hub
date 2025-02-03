@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java_spring.job_hub.dto.request.UserCreationRequest;
 import java_spring.job_hub.dto.request.UserUpdateRequest;
 import java_spring.job_hub.dto.response.UserResponse;
@@ -12,6 +13,7 @@ import java_spring.job_hub.entity.User;
 import java_spring.job_hub.exception.AppException;
 import java_spring.job_hub.exception.ErrorCode;
 import java_spring.job_hub.mapper.UserMapper;
+import java_spring.job_hub.repository.EmailRepository;
 import java_spring.job_hub.repository.RoleRepository;
 import java_spring.job_hub.repository.UserRepository;
 
@@ -36,6 +38,8 @@ public class UserService {
     UserMapper userMapper;
     PasswordEncoder passwordEncoder;
     RoleRepository roleRepository;
+    EmailRepository emailRepository;
+    EmailService emailService;
 
     public UserResponse createUser(UserCreationRequest request) {
         log.info("Service : Create User");
@@ -49,6 +53,9 @@ public class UserService {
         Set<Role> roles = new HashSet<>();
         roles.add(role);
         user.setRoles(roles);
+        user.setActivationCode(generateActivationCode());
+        user.setIsActivation(false);
+        sendActiveCode(user.getEmail(), user.getActivationCode());
 
         return userMapper.toUserResponse(userReponsetory.save(user));
     }
@@ -126,5 +133,43 @@ public class UserService {
         System.out.println("Updated user in DB: " + updatedUser); // Kiểm tra thông tin sau khi lưu
 
         return userMapper.toUserResponse(updatedUser);
+    }
+
+    // Viet ma xac thuc ban email sau khi dang ky
+    private String generateActivationCode() {
+        return UUID.randomUUID().toString();
+    }
+
+    private void sendActiveCode(String email, String activationCode) {
+        String from = "tuanhdai12@gmail.com";
+        String subject = "Activate your account at Job_hub";
+        String text = "Please use the following code to activate your account <" + email + ">:<html><body><br/><h1>"
+                + activationCode + "</h1></body></html>";
+        text += "<br/> Click on the link to activate your account: ";
+        String url = "http://localhost:3000/activate/" + email + "/" + activationCode;
+        text += "<br/> <a href=" + url + ">" + url + "</a>";
+
+        emailService.sendMessage(from, email, subject, text);
+    }
+
+    public String activationAccount(String email, String activationCode) {
+        User user = userReponsetory.findByEmail(email);
+        if (user == null) {
+            return "User not exists !";
+        }
+        if (user.getIsActivation()) {
+            return "Account already activated";
+        }
+        System.out.println("Activation code in DB: " + user.getActivationCode());
+        System.out.println("Activation code provided: " + activationCode);
+        System.out.println("Is activation before: " + user.getIsActivation());
+        if (activationCode.equals(user.getActivationCode())) {
+            user.setIsActivation(true);
+            userReponsetory.save(user);
+            System.out.println("Is activation after: " + user.getIsActivation());
+            return "Account activation success";
+        } else {
+            return "Incorrect activation code!";
+        }
     }
 }

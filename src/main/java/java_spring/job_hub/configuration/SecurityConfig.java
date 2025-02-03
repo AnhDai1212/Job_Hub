@@ -28,7 +28,6 @@ public class SecurityConfig {
         "/permissions",
         "/auth/logout",
         "/auth/refresh",
-        "/user-check/**"
     };
 
     private CustomJwtDecoder customJwtDecoder;
@@ -45,8 +44,9 @@ public class SecurityConfig {
                 //                .csrf(csrf -> csrf.disable()) // Vô hiệu hóa CSRF. khi ko su dung jwt
                 .authorizeHttpRequests(request -> request.requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS)
                         .permitAll()
-                        .requestMatchers(HttpMethod.GET, "/user-check/**")
+                        .requestMatchers(HttpMethod.GET, "/user-check/**","/users/activate")
                         .permitAll()
+
                         //                                .requestMatchers(HttpMethod.POST, "/auth/token").permitAll()
                         //                        .requestMatchers(HttpMethod.GET, "/users").hasAuthority("ADMIN")
                         .anyRequest()

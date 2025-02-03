@@ -32,6 +32,8 @@ public class User {
     LocalDateTime createAt;
     String gender;
     String phone;
+    Boolean isActivation;
+    String activationCode;
 
     @ManyToMany
     Set<Role> roles;
