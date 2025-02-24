@@ -15,12 +15,18 @@ spring:
     host: smtp.gmail.com
     port: 587
     username: tuanhdai12@gmail.com
-    password: sifj naaf oaad nfcj  # Kiểm tra xem có đúng App Password không!
+    password: ${MAIL_PASSWORD}  # Kiểm tra xem có đúng App Password không!
     properties:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true
+outbound:
+  google:
+    client-id: ${GOOGLE_CLIENT_ID}
+    client-secret: ${GOOGLE_CLIENT_SECRET}
+    redirect-uri: ${GOOGLE_REDIRECT_URI}
 
 jwt:
-  signerkey: BHkRPMOnl2ZV6Z0P+H3eHwuq2D1kZioQcox/ujMlfboZNBU/5E/PeJvavUmO2Z1w
+  signerkey: ${JWT_SIGNER_KEY}
+#  signerkey: BHkRPMOnl2ZV6Z0P+H3eHwuq2D1kZioQcox/ujMlfboZNBU/5E/PeJvavUmO2Z1w
   valid-duration: 3600  # thời gian kéo dài có hiệu lực là 3600s
   refreshable-duration: 36000  # thời gian có thể làm mới 36000s

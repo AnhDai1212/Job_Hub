@@ -6,6 +6,7 @@ import java_spring.job_hub.dto.request.IntrospectRequest;
 import java_spring.job_hub.service.AuthenticationService;
 import javax.crypto.spec.SecretKeySpec;
 
+import lombok.experimental.NonFinal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
@@ -17,6 +18,7 @@ import com.nimbusds.jose.JOSEException;
 
 @Component
 public class CustomJwtDecoder implements JwtDecoder {
+    @NonFinal
     @Value("${jwt.signerkey}")
     private String signerKey;
 

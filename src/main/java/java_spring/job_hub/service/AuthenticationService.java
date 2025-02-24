@@ -8,10 +8,9 @@ import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.StringJoiner;
 import java.util.UUID;
-import java_spring.job_hub.dto.request.AuthenticationRequest;
-import java_spring.job_hub.dto.request.IntrospectRequest;
-import java_spring.job_hub.dto.request.LogoutRequest;
-import java_spring.job_hub.dto.request.RefreshRequest;
+
+import jakarta.annotation.PostConstruct;
+import java_spring.job_hub.dto.request.*;
 import java_spring.job_hub.dto.response.AuthenticationResponse;
 import java_spring.job_hub.dto.response.IntrospectResponse;
 import java_spring.job_hub.entity.InvalidatedToken;
@@ -19,9 +18,12 @@ import java_spring.job_hub.entity.User;
 import java_spring.job_hub.exception.AppException;
 import java_spring.job_hub.exception.ErrorCode;
 import java_spring.job_hub.repository.InvalidatedTokenRepository;
+import java_spring.job_hub.repository.OutboundIdentityClient;
 import java_spring.job_hub.repository.RoleRepository;
 import java_spring.job_hub.repository.UserRepository;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -41,13 +43,15 @@ import lombok.experimental.NonFinal;
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Slf4j
 public class AuthenticationService {
     UserRepository userRepository;
     PasswordEncoder passwordEncoder;
     InvalidatedTokenRepository invalidatedTokenRepository;
+    OutboundIdentityClient outboundIdentityClient;
 
     @NonFinal
-    @Value("${jwt.signerkey}")
+    @Value("${JWT_SIGNER_KEY}")
     protected String SIGNER_KEY;
 
     @NonFinal
@@ -58,7 +62,28 @@ public class AuthenticationService {
     @Value("${jwt.valid-duration}")
     protected Long VALID_DURATION;
 
-    private final RoleRepository roleRepository;
+//    private final RoleRepository roleRepository;
+
+    @Value("${GOOGLE_CLIENT_ID:NOT_SET}")
+    @NonFinal
+    protected String CLIENT_ID;
+
+    @Value("${GOOGLE_CLIENT_SECRET:NOT_SET}")
+    @NonFinal
+    protected String CLIENT_SECRET;
+
+    @Value("${GOOGLE_REDIRECT_URI:NOT_SET}")
+    @NonFinal
+    protected String REDIRECT_URI;
+    @PostConstruct
+    public void printEnvVariables() {
+        log.info("🚀 SIGNER_KEY: {}", SIGNER_KEY);
+        log.info("🚀 GOOGLE_CLIENT_ID: {}", CLIENT_ID);
+        log.info("🚀 GOOGLE_CLIENT_SECRET: {}", CLIENT_SECRET);
+        log.info("🚀 GOOGLE_REDIRECT_URI: {}", REDIRECT_URI);
+    }
+    @NonFinal
+    protected String GRANT_TYPE = "authorization_code";
 
     public IntrospectResponse introspect(IntrospectRequest request) throws JOSEException, ParseException {
         var token = request.getToken();
@@ -72,6 +97,24 @@ public class AuthenticationService {
 
         return IntrospectResponse.builder().valid(isValid).build();
     }
+    //Login with google
+    public AuthenticationResponse outboundAuthenticate(String code) {
+
+        var response = outboundIdentityClient.exchangeToken(ExchangeTokenRequest.builder()
+                        .code(code)
+                        .clientId(CLIENT_ID)
+                        .clientSecret(CLIENT_SECRET)
+                        .redirectUri(REDIRECT_URI)
+                        .grantType(GRANT_TYPE)
+                .build());
+
+        log.info("Token response: {}" + response);
+        return AuthenticationResponse.builder()
+                .token(response.getAccessToken())
+                .build();
+    }
+
+
 
     // Kiem tra dang nhap và tao token cho client
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
