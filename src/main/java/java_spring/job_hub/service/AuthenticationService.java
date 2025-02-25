@@ -107,6 +107,8 @@ public class AuthenticationService {
                         .redirectUri(REDIRECT_URI)
                         .grantType(GRANT_TYPE)
                 .build());
+
+
         Role role = roleRepository.findByName("USER").orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_EXIST));
         Set<Role> roles = new HashSet<>();
         roles.add(role);
@@ -122,9 +124,12 @@ public class AuthenticationService {
                                 .roles(roles)
                         .build())
         );
-        log.info("Token response: {}" + userInfor);
+        var token = generateToken(user);
+//        log.info("Token response: {}" + token);
+//        log.info("Token response: {}" + userInfor);
         return AuthenticationResponse.builder()
-                .token(response.getAccessToken())
+//                .token(response.getAccessToken())
+                .token(token)
                 .build();
     }
 
@@ -153,7 +158,7 @@ public class AuthenticationService {
 
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
                 .subject(user.getUsername())
-                .issuer("devteria.com")
+                .issuer("jobhub.com")
                 .issueTime(new Date())
                 .expirationTime(new Date(
                         Instant.now().plus(VALID_DURATION, ChronoUnit.SECONDS).toEpochMilli()))

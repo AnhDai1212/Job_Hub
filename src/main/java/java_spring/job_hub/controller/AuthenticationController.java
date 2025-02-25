@@ -41,15 +41,6 @@ public class AuthenticationController {
                 .build();
     }
 
-
-
-
-    //    @PostMapping("/login")
-    //    public ApiResponse<AuthResponse> loginPage(@RequestBody UserLoginRequest request) {
-    //        return ApiResponse.<AuthResponse>builder()
-    //                .result()
-    //                .build()
-    //    }
     @PostMapping("/token")
     public ApiResponse<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
         AuthenticationResponse authenticationResponse = authenticationService.authenticate(request);
@@ -79,31 +70,5 @@ public class AuthenticationController {
                 .build();
     };
 
-
-
-    @PostMapping("/google")
-    public String googleLogin(@RequestBody String idTokenString) {
-        try {
-            GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
-                    new NetHttpTransport(),
-                    new JacksonFactory()
-            )
-                    .setAudience(Collections.singletonList("3964472893-0g9mdp6aaka2ml6f8cccuq60feha3fdf.apps.googleusercontent.com")) // Replace with your actual client ID
-                    .build();
-
-            GoogleIdToken idToken = verifier.verify(idTokenString);
-            if (idToken != null) {
-                GoogleIdToken.Payload payload = idToken.getPayload();
-
-                // Get email of user
-                String email = payload.getEmail();
-                return "Đăng nhập thành công với email: " + email;
-            } else {
-                return "Google login failed: Invalid ID token";
-            }
-        } catch (Exception e) {
-            return "Google login failed: " + e.getMessage();
-        }
-    }
 
 }
