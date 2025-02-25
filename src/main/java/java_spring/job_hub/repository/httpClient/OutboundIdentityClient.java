@@ -1,4 +1,4 @@
-package java_spring.job_hub.repository;
+package java_spring.job_hub.repository.httpClient;
 
 
 import feign.QueryMap;

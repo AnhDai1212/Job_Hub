@@ -1,29 +1,27 @@
 package java_spring.job_hub.service;
 
-import static org.hibernate.query.sqm.tree.SqmNode.log;
-
 import java.text.ParseException;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.StringJoiner;
-import java.util.UUID;
+import java.util.*;
 
-import jakarta.annotation.PostConstruct;
+import com.google.api.client.util.DateTime;
 import java_spring.job_hub.dto.request.*;
 import java_spring.job_hub.dto.response.AuthenticationResponse;
 import java_spring.job_hub.dto.response.IntrospectResponse;
 import java_spring.job_hub.entity.InvalidatedToken;
+import java_spring.job_hub.entity.Role;
 import java_spring.job_hub.entity.User;
 import java_spring.job_hub.exception.AppException;
 import java_spring.job_hub.exception.ErrorCode;
 import java_spring.job_hub.repository.InvalidatedTokenRepository;
-import java_spring.job_hub.repository.OutboundIdentityClient;
 import java_spring.job_hub.repository.RoleRepository;
+import java_spring.job_hub.repository.httpClient.OutboundIdentityClient;
 import java_spring.job_hub.repository.UserRepository;
 
+import java_spring.job_hub.repository.httpClient.OutboundUserClient;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -45,10 +43,12 @@ import lombok.experimental.NonFinal;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
 public class AuthenticationService {
+    RoleRepository roleRepository;
     UserRepository userRepository;
     PasswordEncoder passwordEncoder;
     InvalidatedTokenRepository invalidatedTokenRepository;
     OutboundIdentityClient outboundIdentityClient;
+    OutboundUserClient outboundUserClient;
 
     @NonFinal
     @Value("${JWT_SIGNER_KEY}")
@@ -75,13 +75,13 @@ public class AuthenticationService {
     @Value("${GOOGLE_REDIRECT_URI:NOT_SET}")
     @NonFinal
     protected String REDIRECT_URI;
-    @PostConstruct
-    public void printEnvVariables() {
-        log.info("🚀 SIGNER_KEY: {}", SIGNER_KEY);
-        log.info("🚀 GOOGLE_CLIENT_ID: {}", CLIENT_ID);
-        log.info("🚀 GOOGLE_CLIENT_SECRET: {}", CLIENT_SECRET);
-        log.info("🚀 GOOGLE_REDIRECT_URI: {}", REDIRECT_URI);
-    }
+//    @PostConstruct
+//    public void printEnvVariables() {
+//        log.info("🚀 SIGNER_KEY: {}", SIGNER_KEY);
+//        log.info("🚀 GOOGLE_CLIENT_ID: {}", CLIENT_ID);
+//        log.info("🚀 GOOGLE_CLIENT_SECRET: {}", CLIENT_SECRET);
+//        log.info("🚀 GOOGLE_REDIRECT_URI: {}", REDIRECT_URI);
+//    }
     @NonFinal
     protected String GRANT_TYPE = "authorization_code";
 
@@ -107,8 +107,22 @@ public class AuthenticationService {
                         .redirectUri(REDIRECT_URI)
                         .grantType(GRANT_TYPE)
                 .build());
-
-        log.info("Token response: {}" + response);
+        Role role = roleRepository.findByName("USER").orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_EXIST));
+        Set<Role> roles = new HashSet<>();
+        roles.add(role);
+        var userInfor = outboundUserClient.getUserInfor("json", response.getAccessToken());
+        var user = userRepository.findUserByUsername(userInfor.getEmail()).orElseGet(
+                () ->  userRepository.save(User.builder()
+                                .username(userInfor.getEmail())
+                                .id(userInfor.getId())
+                                .email(userInfor.getEmail())
+                                .firstName(userInfor.getGivenName())
+                                .lastName(userInfor.getFamilyName())
+                                .createAt(LocalDateTime.now())
+                                .roles(roles)
+                        .build())
+        );
+        log.info("Token response: {}" + userInfor);
         return AuthenticationResponse.builder()
                 .token(response.getAccessToken())
                 .build();

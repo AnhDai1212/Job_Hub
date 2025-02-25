@@ -26,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j // Sinh ra log
 public class ApplicationInitConfig {
 
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @PostConstruct
