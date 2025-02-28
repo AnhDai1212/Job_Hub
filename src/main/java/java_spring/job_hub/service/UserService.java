@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+
+import java_spring.job_hub.dto.request.PasswordCreationRequest;
 import java_spring.job_hub.dto.request.UserCreationRequest;
 import java_spring.job_hub.dto.request.UserUpdateRequest;
 import java_spring.job_hub.dto.response.UserResponse;
@@ -27,6 +29,9 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.StringUtils;
+
+
 
 @Service
 @AllArgsConstructor
@@ -58,6 +63,21 @@ public class UserService {
         sendActiveCode(user.getEmail(), user.getActivationCode());
 
         return userMapper.toUserResponse(userReponsetory.save(user));
+    }
+
+    public void createPassword(PasswordCreationRequest request) {
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+        User user = userReponsetory.findUserByUsername(name).orElseThrow(
+                () -> new AppException(ErrorCode.USER_NOT_EXISTED)
+        );
+        if(StringUtils.hasText(user.getPassword())) {  // StringUltis.hasText
+            throw  new AppException(ErrorCode.PASSWORD_EXISTED);
+        }
+
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setIsActivation(true);
+        userReponsetory.save(user);
     }
 
     public UserResponse updateUser(String id, UserUpdateRequest request) {
@@ -104,7 +124,10 @@ public class UserService {
         User user = userReponsetory
                 .findUserByUsername(name)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-        return userMapper.toUserResponse(user);
+        var userResponse = userMapper.toUserResponse(user);
+        userResponse.setNoPassword(!StringUtils.hasText(user.getPassword()));
+
+        return userResponse;
     }
 
     public void deleteUser(String id) {

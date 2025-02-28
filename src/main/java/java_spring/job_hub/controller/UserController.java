@@ -2,6 +2,8 @@ package java_spring.job_hub.controller;
 
 import java.util.List;
 import java.util.Map;
+
+import java_spring.job_hub.dto.request.PasswordCreationRequest;
 import java_spring.job_hub.dto.request.UserCreationRequest;
 import java_spring.job_hub.dto.request.UserUpdateRequest;
 import java_spring.job_hub.dto.response.ApiResponse;
@@ -33,6 +35,15 @@ public class UserController {
         return ApiResponse.<UserResponse>builder()
                 .code(1000)
                 .result(userService.createUser(request))
+                .build();
+    }
+
+    @PostMapping("create-password")
+    ApiResponse<Void> createPassword(@RequestBody @Valid PasswordCreationRequest request){
+        userService.createPassword(request);
+        return ApiResponse.<Void>builder()
+                .code(1000)
+                .message("Password has been created, you could use it to log-in!")
                 .build();
     }
 

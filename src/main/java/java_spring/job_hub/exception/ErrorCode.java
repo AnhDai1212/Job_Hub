@@ -20,7 +20,9 @@ public enum ErrorCode {
     INVALID_DOB(1008, "Your age must bt at least {min}", HttpStatus.BAD_REQUEST), // 403
     ROLE_NOT_EXIST(1009, "Role not existed", HttpStatus.NOT_FOUND),
     PERMISSION_NOT_EXIST(1010, "Permission not existed", HttpStatus.NOT_FOUND),
-    UNVERIFIED_ACCOUNT(1011, "Unverified account !", HttpStatus.UNAUTHORIZED);
+    UNVERIFIED_ACCOUNT(1011, "Unverified account !", HttpStatus.UNAUTHORIZED),
+    PASSWORD_EXISTED(1012, "Password existed !", HttpStatus.BAD_REQUEST);
+
 
     ErrorCode(int code, String message, HttpStatusCode httpStatusCode) {
         this.code = code;

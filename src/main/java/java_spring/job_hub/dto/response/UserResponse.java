@@ -27,4 +27,5 @@ public class UserResponse {
     LocalDateTime createAt;
     Set<RoleResponse> roles;
     Boolean isActivation;
+    Boolean noPassword;
 }
