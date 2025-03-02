@@ -74,7 +74,6 @@ public class UserService {
         if(StringUtils.hasText(user.getPassword())) {  // StringUltis.hasText
             throw  new AppException(ErrorCode.PASSWORD_EXISTED);
         }
-
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setIsActivation(true);
         userReponsetory.save(user);
@@ -98,7 +97,11 @@ public class UserService {
         //        if (request.getRoles() == null || request.getRoles().isEmpty()) {
         //            throw new IllegalArgumentException("Roles must not be null or empty" + user.getRoles());
         //        }
-
+// Xử lý cập nhật roles
+        if (request.getRoles() != null && !request.getRoles().isEmpty()) {
+            var roles = roleRepository.findAllById(request.getRoles()); // Tìm roles theo tên
+            user.setRoles(new HashSet<>(roles)); // Ghi đè danh sách roles cũ
+        }
         System.out.println("User before save: " + user.getId());
         return userMapper.toUserResponse(userReponsetory.save(user));
     }

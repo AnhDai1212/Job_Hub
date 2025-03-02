@@ -8,8 +8,9 @@ import java_spring.job_hub.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
-
-@Mapper(componentModel = "spring")
+import org.mapstruct.NullValuePropertyMappingStrategy;
+// Bo qua cac truong null nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+@Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface UserMapper {
     User toUser(UserCreationRequest request);
 

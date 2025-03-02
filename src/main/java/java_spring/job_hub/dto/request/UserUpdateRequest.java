@@ -6,7 +6,7 @@ import java.util.List;
 import jakarta.validation.constraints.Size;
 
 import lombok.*;
-import lombok.experimental.FieldDefaults;
+        import lombok.experimental.FieldDefaults;
 
 @Data
 @Builder
@@ -26,4 +26,6 @@ public class UserUpdateRequest {
     List<String> roles;
     String gender;
     String phone;
+    Boolean isActivation;
+
 }
