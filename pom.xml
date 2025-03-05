@@ -13,6 +13,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>Job_Hub</name>
     <description>Job_Hub</description>
+
     <url/>
     <licenses>
         <license/>
@@ -226,6 +227,13 @@
             <artifactId>spring-cloud-starter-openfeign</artifactId>
         </dependency>
 
+        <!-- Cloudinary -->
+        <dependency>
+            <groupId>com.cloudinary</groupId>
+            <artifactId>cloudinary-http44</artifactId>
+            <version>1.38.0</version>
+        </dependency>
+
 
 
 
@@ -248,7 +256,15 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>com.cloudinary</groupId>
+                <artifactId>cloudinary</artifactId>
+                <version>1.33.0</version>
+            </dependency>
+
+
         </dependencies>
+
     </dependencyManagement>
 
 
@@ -352,7 +368,7 @@
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok-mapstruct-binding</artifactId>
-                            <version>${lombok.version}</version>
+                            <version>${lombok-mapstruct-binding.version}</version>
                         </path>
                         <path>
                             <groupId>org.mapstruct</groupId>

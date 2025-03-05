@@ -31,6 +31,7 @@ public class SecurityConfig {
         "/auth/logout",
         "/auth/refresh",
         "/auth/outbound/authentication",
+            "/api/images/upload"
     };
     @Autowired
     private CustomJwtDecoder customJwtDecoder;

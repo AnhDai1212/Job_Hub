@@ -21,7 +21,8 @@ public enum ErrorCode {
     ROLE_NOT_EXIST(1009, "Role not existed", HttpStatus.NOT_FOUND),
     PERMISSION_NOT_EXIST(1010, "Permission not existed", HttpStatus.NOT_FOUND),
     UNVERIFIED_ACCOUNT(1011, "Unverified account !", HttpStatus.UNAUTHORIZED),
-    PASSWORD_EXISTED(1012, "Password existed !", HttpStatus.BAD_REQUEST);
+    PASSWORD_EXISTED(1012, "Password existed !", HttpStatus.BAD_REQUEST),
+    UPLOAD_FAILED(1013, "Upload image failed!", HttpStatus.INTERNAL_SERVER_ERROR);
 
 
     ErrorCode(int code, String message, HttpStatusCode httpStatusCode) {
