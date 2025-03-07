@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Size;
 
 import lombok.*;
         import lombok.experimental.FieldDefaults;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @Builder
@@ -27,5 +28,4 @@ public class UserUpdateRequest {
     String gender;
     String phone;
     Boolean isActivation;
-
 }

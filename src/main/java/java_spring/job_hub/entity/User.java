@@ -34,6 +34,7 @@ public class User {
     String phone;
     Boolean isActivation;
     String activationCode;
+    String avatarUrl;
 
     @ManyToMany
     Set<Role> roles;

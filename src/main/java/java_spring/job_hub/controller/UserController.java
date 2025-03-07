@@ -1,8 +1,10 @@
 package java_spring.job_hub.controller;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import java_spring.job_hub.dto.request.PasswordCreationRequest;
 import java_spring.job_hub.dto.request.UserCreationRequest;
 import java_spring.job_hub.dto.request.UserUpdateRequest;
@@ -15,10 +17,12 @@ import java_spring.job_hub.service.UserService;
 
 import jakarta.validation.Valid;
 
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/users")
@@ -47,11 +51,13 @@ public class UserController {
                 .build();
     }
 
-    @PutMapping("/{userId}")
-    ApiResponse<UserResponse> updateUser(@PathVariable String userId, @RequestBody UserUpdateRequest request) {
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    ApiResponse<UserResponse> updateUser(@PathVariable("id") String userId,
+                                         @RequestPart("user") UserUpdateRequest request,
+                                         @RequestPart(value = "image", required = false) MultipartFile image) throws IOException {
         return ApiResponse.<UserResponse>builder()
                 .code(1000)
-                .result(userService.updateUser(userId, request))
+                .result(userService.updateUser(userId, request, image))
                 .build();
     }
 

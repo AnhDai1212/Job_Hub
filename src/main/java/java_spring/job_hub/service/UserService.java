@@ -1,5 +1,6 @@
 package java_spring.job_hub.service;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
@@ -30,7 +31,7 @@ import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
-
+import org.springframework.web.multipart.MultipartFile;
 
 
 @Service
@@ -45,6 +46,7 @@ public class UserService {
     RoleRepository roleRepository;
     EmailRepository emailRepository;
     EmailService emailService;
+    CloudinaryService cloudinaryService;
 
     public UserResponse createUser(UserCreationRequest request) {
         log.info("Service : Create User");
@@ -79,30 +81,26 @@ public class UserService {
         userReponsetory.save(user);
     }
 
-    public UserResponse updateUser(String id, UserUpdateRequest request) {
+    @PreAuthorize("hasRole('ADMIN') or authentication.name == #request.username") // dam bao dung doi tuong update
+    public UserResponse updateUser(String id, UserUpdateRequest request, MultipartFile image) throws IOException {
         User user = userReponsetory.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         userMapper.updateUser(user, request);
         if (request.getPassword() != null && !request.getPassword().isEmpty()) {
-            //            System.out.println("Mật khẩu mới: " + request.getPassword()); // Kiểm tra giá trị mật khẩu
             user.setPassword(passwordEncoder.encode(request.getPassword()));
-            //            System.out.println("Mật khẩu mới sau ma hoa: " + user.getPassword()); // Kiểm tra giá trị mật
-            // khẩu
         }
-        //        Cap nhat user ko truyen role vao`
-        //        if (request.getRoles() != null && !request.getRoles().isEmpty()) {
-        //            var roles = roleRepository.findAllById(request.getRoles());
-        //            user.setRoles(new HashSet<>(roles));
-        //        }
-        //        if (request.getRoles() == null || request.getRoles().isEmpty()) {
-        //            throw new IllegalArgumentException("Roles must not be null or empty" + user.getRoles());
-        //        }
-// Xử lý cập nhật roles
+
+        // Xử lý cập nhật roles
         if (request.getRoles() != null && !request.getRoles().isEmpty()) {
             var roles = roleRepository.findAllById(request.getRoles()); // Tìm roles theo tên
             user.setRoles(new HashSet<>(roles)); // Ghi đè danh sách roles cũ
         }
-        System.out.println("User before save: " + user.getId());
+
+        if(image != null && !image.isEmpty() ) {
+            String avatarUrl = cloudinaryService.uploadImage(image);
+            user.setAvatarUrl(avatarUrl);
+        }
+        System.out.println("User before save: " + user.getAvatarUrl());
         return userMapper.toUserResponse(userReponsetory.save(user));
     }
 

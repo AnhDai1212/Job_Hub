@@ -28,4 +28,5 @@ public class UserResponse {
     Set<RoleResponse> roles;
     Boolean isActivation;
     Boolean noPassword;
+    String avatarUrl;
 }
