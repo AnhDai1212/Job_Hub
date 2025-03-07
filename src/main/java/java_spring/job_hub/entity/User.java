@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import lombok.*;
@@ -39,8 +40,8 @@ public class User {
     @ManyToMany
     Set<Role> roles;
 
-    @OneToOne(mappedBy = "user")
-    Companies companies;
+//    @OneToOne(mappedBy = "user")
+//    Companies companies;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     List<Applications> applicationsList;
@@ -59,4 +60,10 @@ public class User {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     List<Notifications> notificationsList;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonBackReference // Bỏ qua phía "backward"
+    List<Recruiters> recruitersList;
+
+
 }

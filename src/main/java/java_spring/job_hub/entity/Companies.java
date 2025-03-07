@@ -37,7 +37,11 @@ public class Companies {
     @OneToMany(mappedBy = "companies", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     List<Images> imagesList;
 
-    @OneToOne()
-    @JoinColumn(name = "userId")
-    User user;
+//    @OneToOne()
+//    @JoinColumn(name = "userId")
+//    User user;
+
+    @OneToMany(mappedBy = "companies", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    List<Recruiters> recruitersList;
+
 }
