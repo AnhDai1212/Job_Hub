@@ -2,7 +2,9 @@ package java_spring.job_hub.dto.response;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
+import java_spring.job_hub.entity.Recruiters;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,6 +28,7 @@ public class UserResponse {
     String phone;
     LocalDateTime createAt;
     Set<RoleResponse> roles;
+    List<Recruiters> recruitersList;
     Boolean isActivation;
     Boolean noPassword;
     String avatarUrl;

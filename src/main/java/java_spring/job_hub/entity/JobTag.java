@@ -1,6 +1,9 @@
 package java_spring.job_hub.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -11,14 +14,10 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Candidate_skills {
+public class JobTag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Integer skillId;
+    Integer tagId;
 
-    String proficiencyLevel;
-
-    @ManyToOne
-    @JoinColumn(name = "userId")
-    User user;
+    String tagName;
 }

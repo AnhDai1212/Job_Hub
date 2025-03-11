@@ -14,7 +14,7 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Job_categories {
+public class JobCategories {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer categoryId;

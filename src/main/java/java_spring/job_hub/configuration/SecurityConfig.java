@@ -32,9 +32,10 @@ public class SecurityConfig {
         "/auth/refresh",
         "/auth/outbound/authentication",
         "/api/images/upload",
-        "/api/recruiters"
-
+        "/api/recruiters",
+        "/api/companies"
     };
+
     @Autowired
     private CustomJwtDecoder customJwtDecoder;
 
@@ -50,7 +51,7 @@ public class SecurityConfig {
                 //                .csrf(csrf -> csrf.disable()) // Vô hiệu hóa CSRF. khi ko su dung jwt
                 .authorizeHttpRequests(request -> request.requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS)
                         .permitAll()
-                        .requestMatchers(HttpMethod.GET, "/user-check/**","/users/activate")
+                        .requestMatchers(HttpMethod.GET, "/user-check/**", "/users/activate")
                         .permitAll()
 
                         //                                .requestMatchers(HttpMethod.POST, "/auth/token").permitAll()

@@ -5,6 +5,8 @@ import java.util.List;
 
 import jakarta.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -23,13 +25,15 @@ public class Companies {
     String location;
     String webSite;
     Date createAt;
+    String avatarUrl;
 
     // fk userId
     @OneToMany(mappedBy = "companies", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     List<Jobs> jobsList;
 
     @OneToMany(mappedBy = "companies", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    List<Company_services> companyServicesList;
+    @JsonManagedReference // Bỏ qua phía "backward"
+    List<CompanyServiceDetail> companyServicesList;
 
     @OneToMany(mappedBy = "companies", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     List<Reviews> reviewsList;
@@ -37,11 +41,11 @@ public class Companies {
     @OneToMany(mappedBy = "companies", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     List<Images> imagesList;
 
-//    @OneToOne()
-//    @JoinColumn(name = "userId")
-//    User user;
+    //    @OneToOne()
+    //    @JoinColumn(name = "userId")
+    //    User user;
 
     @OneToMany(mappedBy = "companies", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonManagedReference // Bỏ qua phía "backward"
     List<Recruiters> recruitersList;
-
 }

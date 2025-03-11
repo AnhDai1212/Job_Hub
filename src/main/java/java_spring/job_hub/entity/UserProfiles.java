@@ -11,7 +11,7 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class User_profiles {
+public class UserProfiles {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // avatar thi luu boolean o cot image
     Integer profileId;

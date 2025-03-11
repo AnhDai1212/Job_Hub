@@ -1,14 +1,14 @@
 package java_spring.job_hub.controller;
 
+import java.io.IOException;
 import java_spring.job_hub.dto.response.ApiResponse;
 import java_spring.job_hub.service.CloudinaryService;
-import lombok.RequiredArgsConstructor;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor // tu tao constructor khong cần autowired

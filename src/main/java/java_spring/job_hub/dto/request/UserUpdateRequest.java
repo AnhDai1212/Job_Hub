@@ -6,8 +6,7 @@ import java.util.List;
 import jakarta.validation.constraints.Size;
 
 import lombok.*;
-        import lombok.experimental.FieldDefaults;
-import org.springframework.web.multipart.MultipartFile;
+import lombok.experimental.FieldDefaults;
 
 @Data
 @Builder
@@ -15,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserUpdateRequest {
+    String username;
     @Size(min = 8)
     String password;
 

@@ -1,6 +1,7 @@
 package java_spring.job_hub.dto.request;
 
 import jakarta.validation.constraints.Size;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

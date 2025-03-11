@@ -5,8 +5,6 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-
-import com.google.api.client.util.DateTime;
 import java_spring.job_hub.dto.request.*;
 import java_spring.job_hub.dto.response.AuthenticationResponse;
 import java_spring.job_hub.dto.response.IntrospectResponse;
@@ -17,11 +15,10 @@ import java_spring.job_hub.exception.AppException;
 import java_spring.job_hub.exception.ErrorCode;
 import java_spring.job_hub.repository.InvalidatedTokenRepository;
 import java_spring.job_hub.repository.RoleRepository;
-import java_spring.job_hub.repository.httpClient.OutboundIdentityClient;
 import java_spring.job_hub.repository.UserRepository;
-
+import java_spring.job_hub.repository.httpClient.OutboundIdentityClient;
 import java_spring.job_hub.repository.httpClient.OutboundUserClient;
-import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -37,6 +34,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
@@ -62,7 +60,7 @@ public class AuthenticationService {
     @Value("${jwt.valid-duration}")
     protected Long VALID_DURATION;
 
-//    private final RoleRepository roleRepository;
+    //    private final RoleRepository roleRepository;
 
     @Value("${GOOGLE_CLIENT_ID:NOT_SET}")
     @NonFinal
@@ -75,13 +73,13 @@ public class AuthenticationService {
     @Value("${GOOGLE_REDIRECT_URI:NOT_SET}")
     @NonFinal
     protected String REDIRECT_URI;
-//    @PostConstruct
-//    public void printEnvVariables() {
-//        log.info("🚀 SIGNER_KEY: {}", SIGNER_KEY);
-//        log.info("🚀 GOOGLE_CLIENT_ID: {}", CLIENT_ID);
-//        log.info("🚀 GOOGLE_CLIENT_SECRET: {}", CLIENT_SECRET);
-//        log.info("🚀 GOOGLE_REDIRECT_URI: {}", REDIRECT_URI);
-//    }
+    //    @PostConstruct
+    //    public void printEnvVariables() {
+    //        log.info("🚀 SIGNER_KEY: {}", SIGNER_KEY);
+    //        log.info("🚀 GOOGLE_CLIENT_ID: {}", CLIENT_ID);
+    //        log.info("🚀 GOOGLE_CLIENT_SECRET: {}", CLIENT_SECRET);
+    //        log.info("🚀 GOOGLE_REDIRECT_URI: {}", REDIRECT_URI);
+    //    }
     @NonFinal
     protected String GRANT_TYPE = "authorization_code";
 
@@ -97,43 +95,40 @@ public class AuthenticationService {
 
         return IntrospectResponse.builder().valid(isValid).build();
     }
-    //Login with google
+    // Login with google
     public AuthenticationResponse outboundAuthenticate(String code) {
 
         var response = outboundIdentityClient.exchangeToken(ExchangeTokenRequest.builder()
-                        .code(code)
-                        .clientId(CLIENT_ID)
-                        .clientSecret(CLIENT_SECRET)
-                        .redirectUri(REDIRECT_URI)
-                        .grantType(GRANT_TYPE)
+                .code(code)
+                .clientId(CLIENT_ID)
+                .clientSecret(CLIENT_SECRET)
+                .redirectUri(REDIRECT_URI)
+                .grantType(GRANT_TYPE)
                 .build());
-
 
         Role role = roleRepository.findByName("USER").orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_EXIST));
         Set<Role> roles = new HashSet<>();
         roles.add(role);
         var userInfor = outboundUserClient.getUserInfor("json", response.getAccessToken());
-        var user = userRepository.findUserByUsername(userInfor.getEmail()).orElseGet(
-                () ->  userRepository.save(User.builder()
-                                .username(userInfor.getEmail())
-                                .id(userInfor.getId())
-                                .email(userInfor.getEmail())
-                                .firstName(userInfor.getGivenName())
-                                .lastName(userInfor.getFamilyName())
-                                .createAt(LocalDateTime.now())
-                                .roles(roles)
-                        .build())
-        );
+        var user = userRepository
+                .findUserByUsername(userInfor.getEmail())
+                .orElseGet(() -> userRepository.save(User.builder()
+                        .username(userInfor.getEmail())
+                        .id(userInfor.getId())
+                        .email(userInfor.getEmail())
+                        .firstName(userInfor.getGivenName())
+                        .lastName(userInfor.getFamilyName())
+                        .createAt(LocalDateTime.now())
+                        .roles(roles)
+                        .build()));
         var token = generateToken(user);
-//        log.info("Token response: {}" + token);
-//        log.info("Token response: {}" + userInfor);
+        //        log.info("Token response: {}" + token);
+        //        log.info("Token response: {}" + userInfor);
         return AuthenticationResponse.builder()
-//                .token(response.getAccessToken())
+                //                .token(response.getAccessToken())
                 .token(token)
                 .build();
     }
-
-
 
     // Kiem tra dang nhap và tao token cho client
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
@@ -144,8 +139,8 @@ public class AuthenticationService {
         if (!password) {
             throw new AppException(ErrorCode.PASSWORD_IS_NOT_CORRECT);
         }
-        if (!user.getIsActivation()){
-            throw  new AppException(ErrorCode.UNVERIFIED_ACCOUNT);
+        if (!user.getIsActivation()) {
+            throw new AppException(ErrorCode.UNVERIFIED_ACCOUNT);
         }
 
         var token = generateToken(user);

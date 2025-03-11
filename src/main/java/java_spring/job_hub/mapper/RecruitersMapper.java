@@ -1,12 +1,12 @@
 package java_spring.job_hub.mapper;
 
+import java.util.List;
 import java_spring.job_hub.dto.request.RecruitersRequest;
 import java_spring.job_hub.dto.response.RecruitersResponse;
 import java_spring.job_hub.entity.Recruiters;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-
-import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface RecruitersMapper {

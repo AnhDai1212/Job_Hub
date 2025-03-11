@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-
 import java_spring.job_hub.dto.request.PasswordCreationRequest;
 import java_spring.job_hub.dto.request.UserCreationRequest;
 import java_spring.job_hub.dto.request.UserUpdateRequest;
@@ -25,14 +24,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
-
 
 @Service
 @AllArgsConstructor
@@ -70,11 +68,11 @@ public class UserService {
     public void createPassword(PasswordCreationRequest request) {
         var context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
-        User user = userReponsetory.findUserByUsername(name).orElseThrow(
-                () -> new AppException(ErrorCode.USER_NOT_EXISTED)
-        );
-        if(StringUtils.hasText(user.getPassword())) {  // StringUltis.hasText
-            throw  new AppException(ErrorCode.PASSWORD_EXISTED);
+        User user = userReponsetory
+                .findUserByUsername(name)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        if (StringUtils.hasText(user.getPassword())) { // StringUltis.hasText
+            throw new AppException(ErrorCode.PASSWORD_EXISTED);
         }
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setIsActivation(true);
@@ -96,14 +94,13 @@ public class UserService {
             user.setRoles(new HashSet<>(roles)); // Ghi đè danh sách roles cũ
         }
 
-        if(image != null && !image.isEmpty() ) {
+        if (image != null && !image.isEmpty()) {
             String avatarUrl = cloudinaryService.uploadImage(image);
             user.setAvatarUrl(avatarUrl);
         }
-        System.out.println("User before save: " + user.getAvatarUrl());
+//        System.out.println("User before save: " + user.getAvatarUrl());
         return userMapper.toUserResponse(userReponsetory.save(user));
     }
-
     @PostAuthorize("returnObject.username == authentication.name")
     public UserResponse getUser(String id) {
         //        if(S)

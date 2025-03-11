@@ -1,7 +1,9 @@
 package java_spring.job_hub.entity;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -19,7 +21,7 @@ public class Recruiters {
 
     @ManyToOne
     @JoinColumn(name = "userId")
-    @JsonManagedReference // Quản lý phía "forward"
+    @JsonBackReference
     User user;
 
     @ManyToOne
@@ -31,6 +33,6 @@ public class Recruiters {
             name = "role_name",
             nullable = false,
             columnDefinition = "VARCHAR(255) COLLATE utf8mb4_general_ci" // Đồng bộ collation với bảng role
-    )
+            )
     Role role;
 }

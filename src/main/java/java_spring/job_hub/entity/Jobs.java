@@ -38,11 +38,11 @@ public class Jobs {
                 CascadeType.DETACH, CascadeType.REFRESH
             })
     @JoinTable(name = "job_tag_mapping")
-    Set<Job_tags> jobTags;
+    Set<JobTag> jobTags;
 
     @ManyToMany
     @JoinTable(name = "job_category_mapping")
-    Set<Job_categories> jobCategories;
+    Set<JobCategories> jobCategories;
 
     @OneToMany(mappedBy = "jobs", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     List<Applications> applicationsList;

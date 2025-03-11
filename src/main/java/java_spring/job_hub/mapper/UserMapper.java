@@ -10,11 +10,13 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 // Bo qua cac truong null nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface UserMapper {
     User toUser(UserCreationRequest request);
 
     @Mapping(ignore = true, target = "roles")
+    @Mapping(ignore = true, target = "recruitersList")
     void updateUser(@MappingTarget User user, UserUpdateRequest request);
 
     UserResponse toUserResponse(User user);

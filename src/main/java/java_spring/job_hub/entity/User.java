@@ -5,8 +5,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -40,8 +41,8 @@ public class User {
     @ManyToMany
     Set<Role> roles;
 
-//    @OneToOne(mappedBy = "user")
-//    Companies companies;
+    //    @OneToOne(mappedBy = "user")
+    //    Companies companies;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     List<Applications> applicationsList;
@@ -50,10 +51,10 @@ public class User {
     List<Images> imagesList;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    List<User_profiles> userProfilesList;
+    List<UserProfiles> userProfilesList;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    List<Candidate_skills> candidateSkillsList;
+    List<CandidateSkills> candidateSkillsList;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     List<Favorites> favoritesList;
@@ -62,8 +63,6 @@ public class User {
     List<Notifications> notificationsList;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JsonBackReference // Bỏ qua phía "backward"
+    @JsonManagedReference // Bỏ qua phía "backward"
     List<Recruiters> recruitersList;
-
-
 }
