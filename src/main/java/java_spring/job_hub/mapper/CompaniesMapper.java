@@ -25,5 +25,4 @@ public interface CompaniesMapper {
     void updateCompanies(@MappingTarget Companies companies, CompaniesUpdateRequest request);
 
     CompaniesResponse toCompaniesResponse(Companies companies);
-
 }

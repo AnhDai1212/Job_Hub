@@ -33,7 +33,8 @@ public class SecurityConfig {
         "/auth/outbound/authentication",
         "/api/images/upload",
         "/api/recruiters",
-        "/api/companies"
+        "/api/companies",
+            "/api/recruiters/select-company"
     };
 
     @Autowired

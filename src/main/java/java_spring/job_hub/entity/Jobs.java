@@ -50,4 +50,8 @@ public class Jobs {
     @ManyToOne
     @JoinColumn(name = "companyId")
     Companies companies;
+
+    @ManyToOne
+    @JoinColumn(name = "recruiterId")
+    Recruiters recruiters;
 }

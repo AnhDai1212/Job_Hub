@@ -3,13 +3,10 @@ package java_spring.job_hub.service;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 import java_spring.job_hub.dto.request.CompaniesRequest;
-import java_spring.job_hub.dto.request.CompaniesServiceRequest;
 import java_spring.job_hub.dto.request.CompaniesUpdateRequest;
 import java_spring.job_hub.dto.response.CompaniesResponse;
 import java_spring.job_hub.entity.Companies;
-import java_spring.job_hub.entity.CompanyServiceDetail;
 import java_spring.job_hub.exception.AppException;
 import java_spring.job_hub.exception.ErrorCode;
 import java_spring.job_hub.mapper.CompaniesMapper;
@@ -17,11 +14,11 @@ import java_spring.job_hub.repository.CompaniesRepository;
 import java_spring.job_hub.repository.CompaniesServiceRepository;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -39,30 +36,28 @@ public class CompaniesService {
     }
 
     public CompaniesResponse getCompany(Integer companyId) {
-        Companies companies = companiesRepository.findById(companyId).orElseThrow(
-                () -> new AppException(ErrorCode.COMPANY_NOT_FOUND)
-        );
+        Companies companies = companiesRepository
+                .findById(companyId)
+                .orElseThrow(() -> new AppException(ErrorCode.COMPANY_NOT_FOUND));
         return companiesMapper.toCompaniesResponse(companies);
     }
 
     public List<CompaniesResponse> getAllCompanies() {
 
         return companiesRepository.findAll().stream()
-                .map(
-                companiesMapper::toCompaniesResponse
-        ).toList();
+                .map(companiesMapper::toCompaniesResponse)
+                .toList();
     }
 
-    public CompaniesResponse updateCompany(Integer companyId, CompaniesUpdateRequest request, MultipartFile image) throws IOException {
-        Companies companies = companiesRepository.findById(companyId).orElseThrow(
-                () -> new AppException(ErrorCode.COMPANY_NOT_FOUND)
-        );
+    public CompaniesResponse updateCompany(Integer companyId, CompaniesUpdateRequest request, MultipartFile image)
+            throws IOException {
+        Companies companies = companiesRepository
+                .findById(companyId)
+                .orElseThrow(() -> new AppException(ErrorCode.COMPANY_NOT_FOUND));
         companiesMapper.updateCompanies(companies, request);
-        if( image != null && !image.isEmpty()) {
+        if (image != null && !image.isEmpty()) {
             companies.setAvatarUrl(cloudinaryService.uploadImage(image));
         }
         return companiesMapper.toCompaniesResponse(companiesRepository.save(companies));
     }
-
-
 }

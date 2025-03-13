@@ -1,5 +1,8 @@
 package java_spring.job_hub.entity;
 
+import java.util.List;
+import java_spring.job_hub.enums.RecruiterStatus;
+
 import jakarta.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -19,6 +22,9 @@ public class Recruiters {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
 
+    @Enumerated(EnumType.STRING)
+    private RecruiterStatus status;
+
     @ManyToOne
     @JoinColumn(name = "userId")
     @JsonBackReference
@@ -35,4 +41,7 @@ public class Recruiters {
             columnDefinition = "VARCHAR(255) COLLATE utf8mb4_general_ci" // Đồng bộ collation với bảng role
             )
     Role role;
+
+    @OneToMany(mappedBy = "recruiters", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    List<Jobs> jobsList;
 }

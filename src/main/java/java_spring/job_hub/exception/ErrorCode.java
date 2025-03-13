@@ -24,7 +24,8 @@ public enum ErrorCode {
     PASSWORD_EXISTED(1012, "Password existed !", HttpStatus.BAD_REQUEST),
     UPLOAD_FAILED(1013, "Upload image failed!", HttpStatus.INTERNAL_SERVER_ERROR),
     ALREADY_EMPLOYER(1014, "User already has EMPLOYER role!", HttpStatus.BAD_REQUEST),
-    COMPANY_NOT_FOUND(1015, "Company not found!", HttpStatus.NOT_FOUND);
+    COMPANY_NOT_FOUND(1015, "Company not found!", HttpStatus.NOT_FOUND),
+    RECRUITER_NOT_FOUND(1015, "Recruiter not found!", HttpStatus.NOT_FOUND);
 
     ErrorCode(int code, String message, HttpStatusCode httpStatusCode) {
         this.code = code;

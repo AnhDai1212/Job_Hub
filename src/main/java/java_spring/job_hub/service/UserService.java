@@ -98,9 +98,10 @@ public class UserService {
             String avatarUrl = cloudinaryService.uploadImage(image);
             user.setAvatarUrl(avatarUrl);
         }
-//        System.out.println("User before save: " + user.getAvatarUrl());
+        //        System.out.println("User before save: " + user.getAvatarUrl());
         return userMapper.toUserResponse(userReponsetory.save(user));
     }
+
     @PostAuthorize("returnObject.username == authentication.name")
     public UserResponse getUser(String id) {
         //        if(S)
