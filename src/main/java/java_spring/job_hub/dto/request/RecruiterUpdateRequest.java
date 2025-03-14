@@ -1,6 +1,7 @@
 package java_spring.job_hub.dto.request;
 
 import java_spring.job_hub.enums.RecruiterStatus;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 

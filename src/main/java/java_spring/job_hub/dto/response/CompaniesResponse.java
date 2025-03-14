@@ -25,4 +25,5 @@ public class CompaniesResponse {
     List<Images> imagesList;
     List<Recruiters> recruitersList;
     String avatarUrl;
+    Boolean isApproved;
 }

@@ -32,6 +32,7 @@ public class CompaniesService {
     public CompaniesResponse createCompanies(CompaniesRequest request) {
         Companies companies = companiesMapper.toCompanies(request);
         companies.setCreateAt(new Date());
+        companies.setIsApproved(false);
         return companiesMapper.toCompaniesResponse(companiesRepository.save(companies));
     }
 

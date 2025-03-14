@@ -23,4 +23,8 @@ public class Favorites {
     @ManyToOne
     @JoinColumn(name = "userId")
     User user;
+
+    @ManyToOne
+    @JoinColumn(name = "jobId")
+    Jobs jobs;
 }

@@ -54,4 +54,7 @@ public class Jobs {
     @ManyToOne
     @JoinColumn(name = "recruiterId")
     Recruiters recruiters;
+
+    @OneToMany(mappedBy = "jobs", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    List<Favorites> favoritesList;
 }

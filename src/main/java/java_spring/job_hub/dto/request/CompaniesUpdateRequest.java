@@ -18,4 +18,5 @@ public class CompaniesUpdateRequest {
     //    List<Images> imagesList;
     //    List<Recruiters> recruitersList;
     String avatarUrl;
+    Boolean isApproved;
 }
