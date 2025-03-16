@@ -32,6 +32,7 @@ public class Recruiters {
 
     @ManyToOne
     @JoinColumn(name = "companyId")
+    @JsonBackReference
     Companies companies;
 
     @ManyToOne

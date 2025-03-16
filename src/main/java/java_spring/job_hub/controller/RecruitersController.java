@@ -1,5 +1,7 @@
 package java_spring.job_hub.controller;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java_spring.job_hub.dto.request.RecruiterUpdateRequest;
 import java_spring.job_hub.dto.response.ApiResponse;
@@ -7,6 +9,7 @@ import java_spring.job_hub.dto.response.RecruitersResponse;
 import java_spring.job_hub.service.RecruitersService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import lombok.AccessLevel;
@@ -47,10 +50,20 @@ public class RecruitersController {
                 .build();
     }
 
-    @GetMapping()
-    public ApiResponse<List<RecruitersResponse>> getAllRecruiters() {
-        return ApiResponse.<List<RecruitersResponse>>builder()
-                .result(recruitersService.getListRecruiters())
+//    @GetMapping()
+//    public ApiResponse<List<RecruitersResponse>> getAllRecruiters() {
+//        return ApiResponse.<List<RecruitersResponse>>builder()
+//                .result(recruitersService.getListRecruiters())
+//                .build();
+//    }
+
+    @GetMapping    // Load danh sach hay hon
+    public ApiResponse<Page<RecruitersResponse>> getRecruiters(
+            @PageableDefault(size = 10, page = 0) Pageable pageable) {
+        Page<RecruitersResponse> recruiters = recruitersService.getListRecruiters(pageable);
+        return ApiResponse.<Page<RecruitersResponse>>builder()
+                .message("Success")
+                .result(recruiters)
                 .build();
     }
 
@@ -62,10 +75,10 @@ public class RecruitersController {
     }
 
     @DeleteMapping("/{recruiterId}")
-    public ApiResponse deleteRecruiterById(@PathVariable Integer recruiterId) {
-        return ApiResponse.builder()
+    public ApiResponse<Void> deleteRecruiterById(@PathVariable Integer recruiterId) {
+        recruitersService.deleteRecruiterById(recruiterId);
+        return ApiResponse.<Void>builder()
                 .message("Delete success!")
-                .result(recruitersService.deleteRecruiterById(recruiterId))
                 .build();
     }
 }

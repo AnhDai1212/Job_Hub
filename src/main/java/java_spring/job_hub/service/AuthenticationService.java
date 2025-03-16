@@ -157,7 +157,8 @@ public class AuthenticationService {
                 .issueTime(new Date())
                 .expirationTime(new Date(
                         Instant.now().plus(VALID_DURATION, ChronoUnit.SECONDS).toEpochMilli()))
-                .jwtID(UUID.randomUUID().toString())
+                //                .jwtID(UUID.randomUUID().toString())
+                .jwtID(user.getId())
                 .claim("scope", buildScope(user))
                 .build();
 

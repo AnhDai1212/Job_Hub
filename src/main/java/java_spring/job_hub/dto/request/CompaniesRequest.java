@@ -14,6 +14,7 @@ public class CompaniesRequest {
     String companyName;
     String location;
     String webSite;
+    //    String status;
     //    Date createAt;
     //    List<Integer> jobsList;
     //    List<Integer> companyServicesList;

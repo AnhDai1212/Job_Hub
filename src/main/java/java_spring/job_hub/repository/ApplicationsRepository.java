@@ -1,6 +1,7 @@
 package java_spring.job_hub.repository;
 
 import java_spring.job_hub.entity.Applications;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

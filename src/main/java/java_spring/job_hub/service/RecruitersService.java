@@ -1,13 +1,14 @@
 package java_spring.job_hub.service;
 
-import java.util.List;
-import java.util.Set;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 import java_spring.job_hub.dto.request.RecruiterUpdateRequest;
 import java_spring.job_hub.dto.response.RecruitersResponse;
 import java_spring.job_hub.entity.Companies;
 import java_spring.job_hub.entity.Recruiters;
 import java_spring.job_hub.entity.Role;
 import java_spring.job_hub.entity.User;
+import java_spring.job_hub.enums.CompanyStatus;
 import java_spring.job_hub.enums.RecruiterStatus;
 import java_spring.job_hub.exception.AppException;
 import java_spring.job_hub.exception.ErrorCode;
@@ -39,17 +40,20 @@ public class RecruitersService {
         if (hasEmployerRole) {
             throw new AppException(ErrorCode.ALREADY_EMPLOYER);
         }
-        Role role = roleRepository.findByName("EMPLOYER").orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_EXIST));
-        Set<Role> roles = user.getRoles();
-        roles.add(role);
-        user.setRoles(roles);
-        Recruiters recruiters = Recruiters.builder().user(user).role(role).build();
+        Role employerRole =
+                roleRepository.findByName("EMPLOYER").orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_EXIST));
+        user.getRoles().add(employerRole);
+        userRepository.save(user);
+        //        Set<Role> roles = user.getRoles();
+        //        roles.add(employerRole);
+        //        user.setRoles(roles);
+        Recruiters recruiters =
+                Recruiters.builder().user(user).role(employerRole).build();
         recruiters.setStatus(RecruiterStatus.PENDING);
         return recruitersMapper.toRecruitersResponse(recruitersRepository.save(recruiters));
     }
 
     public RecruitersResponse selectCompany(String userId, Integer companyId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         Companies companies = companiesRepository
                 .findById(companyId)
                 .orElseThrow(() -> new AppException(ErrorCode.COMPANY_NOT_FOUND));
@@ -57,6 +61,9 @@ public class RecruitersService {
         Recruiters recruiters = recruitersRepository
                 .findByUserId(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.RECRUITER_NOT_FOUND));
+        if(!companies.getStatus().equals(CompanyStatus.APPROVED)) {
+                throw new AppException(ErrorCode.COMPANY_NOT_FOUND);
+        }
 
         recruiters.setCompanies(companies);
         //        recruiters.setStatus(RecruiterStatus.PENDING);
@@ -77,13 +84,17 @@ public class RecruitersService {
                     .orElseThrow(() -> new AppException(ErrorCode.COMPANY_NOT_FOUND));
             recruiters.setCompanies(companies);
         }
-        return recruitersMapper.toRecruitersResponse(recruiters);
+        return recruitersMapper.toRecruitersResponse(recruitersRepository.save(recruiters));
     }
 
-    public List<RecruitersResponse> getListRecruiters() {
-        return recruitersRepository.findAll().stream()
-                .map(recruitersMapper::toRecruitersResponse)
-                .toList();
+//    public List<RecruitersResponse> getListRecruiters() {
+//        return recruitersRepository.findAll().stream()
+//                .map(recruitersMapper::toRecruitersResponse)
+//                .toList();
+//    }
+    //Load danh sach hay hon
+    public Page<RecruitersResponse> getListRecruiters(Pageable pageable) {
+        return recruitersRepository.findAll(pageable).map(recruitersMapper::toRecruitersResponse);
     }
 
     public RecruitersResponse getRecruiterById(Integer recruiterId) {
@@ -93,11 +104,10 @@ public class RecruitersService {
         return recruitersMapper.toRecruitersResponse(recruiters);
     }
 
-    public Object deleteRecruiterById(Integer recruiterId) {
+    public void deleteRecruiterById(Integer recruiterId) {
         Recruiters recruiters = recruitersRepository
                 .findById(recruiterId)
                 .orElseThrow(() -> new AppException(ErrorCode.RECRUITER_NOT_FOUND));
-        recruitersRepository.deleteById(recruiterId);
-        return null;
+        recruitersRepository.delete(recruiters);
     }
 }

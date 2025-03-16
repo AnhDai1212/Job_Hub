@@ -25,7 +25,10 @@ public enum ErrorCode {
     UPLOAD_FAILED(1013, "Upload image failed!", HttpStatus.INTERNAL_SERVER_ERROR),
     ALREADY_EMPLOYER(1014, "User already has EMPLOYER role!", HttpStatus.BAD_REQUEST),
     COMPANY_NOT_FOUND(1015, "Company not found!", HttpStatus.NOT_FOUND),
-    RECRUITER_NOT_FOUND(1015, "Recruiter not found!", HttpStatus.NOT_FOUND);
+    RECRUITER_NOT_FOUND(1016, "Recruiter not found!", HttpStatus.NOT_FOUND),
+    RECRUITER_NOT_POST(1017, "Recruiter not approved to post jobs!", HttpStatus.NOT_FOUND),
+    JOB_NOT_FOUND(1018, "Job not found!", HttpStatus.NOT_FOUND),
+    RECRUITER_NO_COMPANY(1018, "Requires employers to have a company!", HttpStatus.NOT_FOUND);
 
     ErrorCode(int code, String message, HttpStatusCode httpStatusCode) {
         this.code = code;

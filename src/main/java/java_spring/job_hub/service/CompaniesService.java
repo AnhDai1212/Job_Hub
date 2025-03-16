@@ -7,6 +7,7 @@ import java_spring.job_hub.dto.request.CompaniesRequest;
 import java_spring.job_hub.dto.request.CompaniesUpdateRequest;
 import java_spring.job_hub.dto.response.CompaniesResponse;
 import java_spring.job_hub.entity.Companies;
+import java_spring.job_hub.enums.CompanyStatus;
 import java_spring.job_hub.exception.AppException;
 import java_spring.job_hub.exception.ErrorCode;
 import java_spring.job_hub.mapper.CompaniesMapper;
@@ -19,9 +20,11 @@ import org.springframework.web.multipart.MultipartFile;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class CompaniesService {
     CompaniesRepository companiesRepository;
@@ -32,6 +35,7 @@ public class CompaniesService {
     public CompaniesResponse createCompanies(CompaniesRequest request) {
         Companies companies = companiesMapper.toCompanies(request);
         companies.setCreateAt(new Date());
+        companies.setStatus(CompanyStatus.APPROVED.toString());
         companies.setIsApproved(false);
         return companiesMapper.toCompaniesResponse(companiesRepository.save(companies));
     }

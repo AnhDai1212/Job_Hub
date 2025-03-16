@@ -11,7 +11,6 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class RecruiterUpdateRequest {
-    private Integer recruiterId;
     private RecruiterStatus status; // Chỉ nhận các giá trị ENUM hợp lệ
     private Integer companyId; // Optional: Gán công ty cho HR
 }

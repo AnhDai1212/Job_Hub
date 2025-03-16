@@ -27,6 +27,7 @@ public class Companies {
     Date createAt;
     String avatarUrl;
     Boolean isApproved;
+    String status;
 
     // fk userId
     @OneToMany(mappedBy = "companies", fetch = FetchType.LAZY, cascade = CascadeType.ALL)

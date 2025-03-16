@@ -26,4 +26,5 @@ public class CompaniesResponse {
     List<Recruiters> recruitersList;
     String avatarUrl;
     Boolean isApproved;
+    String status;
 }

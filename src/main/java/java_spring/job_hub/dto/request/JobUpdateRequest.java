@@ -10,7 +10,8 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class JobRequest {
+public class JobUpdateRequest {
+    Integer jobId;
     String title;
     String descriptions;
     String jobType;
