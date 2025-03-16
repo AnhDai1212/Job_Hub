@@ -13,6 +13,8 @@ import java_spring.job_hub.exception.ErrorCode;
 import java_spring.job_hub.mapper.JobMapper;
 import java_spring.job_hub.repository.*;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
@@ -72,5 +74,19 @@ public class JobService {
         jobMapper.updateJob(job, request);
 
         return jobMapper.toJobResponse(jobRepository.save(job));
+    }
+
+    public JobResponse getJob(Integer jobId) {
+        Jobs job = jobRepository.findById(jobId).orElseThrow(() -> new AppException(ErrorCode.JOB_NOT_FOUND));
+        return jobMapper.toJobResponse(job);
+    }
+
+    public void deleteJob(Integer jobId) {
+        Jobs job = jobRepository.findById(jobId).orElseThrow(() -> new AppException(ErrorCode.JOB_NOT_FOUND));
+        jobRepository.delete(job);
+    }
+
+    public Page<JobResponse> getListJobs(Pageable pageable){
+        return jobRepository.findAll(pageable).map(jobMapper::toJobResponse);
     }
 }
