@@ -6,6 +6,7 @@ import java_spring.job_hub.dto.response.ApiResponse;
 import java_spring.job_hub.dto.response.JobResponse;
 import java_spring.job_hub.service.JobService;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -45,20 +46,19 @@ public class JobController {
         return ApiResponse.<JobResponse>builder()
                 .result(jobService.getJob(jobId))
                 .build();
-    };
+    }
+    ;
+
     @GetMapping()
-    public ApiResponse<Page<JobResponse>> getAllJob(@PageableDefault(size = 10, page = 0) Pageable pageable){
+    public ApiResponse<Page<JobResponse>> getAllJob(@PageableDefault(size = 10, page = 0) Pageable pageable) {
         Page<JobResponse> jobs = jobService.getListJobs(pageable);
-        return ApiResponse.<Page<JobResponse>>builder()
-                .result(jobs)
-                .build();
-    };
+        return ApiResponse.<Page<JobResponse>>builder().result(jobs).build();
+    }
+    ;
 
     @DeleteMapping("/{jobId}")
     public ApiResponse<Void> deleteJob(@PathVariable Integer jobId) {
         jobService.deleteJob(jobId);
-        return ApiResponse.<Void>builder()
-                .message("Delete job success!")
-                .build();
+        return ApiResponse.<Void>builder().message("Delete job success!").build();
     }
 }

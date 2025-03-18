@@ -86,7 +86,7 @@ public class JobService {
         jobRepository.delete(job);
     }
 
-    public Page<JobResponse> getListJobs(Pageable pageable){
+    public Page<JobResponse> getListJobs(Pageable pageable) {
         return jobRepository.findAll(pageable).map(jobMapper::toJobResponse);
     }
 }

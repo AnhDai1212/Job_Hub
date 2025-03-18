@@ -35,7 +35,8 @@ public class SecurityConfig {
         "/api/recruiters",
         "/api/companies",
         "/api/recruiters/select-company",
-        "/api/jobs"
+        "/api/jobs",
+        "/api/favorites/add"
     };
 
     @Autowired

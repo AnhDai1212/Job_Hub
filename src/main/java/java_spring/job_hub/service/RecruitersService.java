@@ -1,7 +1,5 @@
 package java_spring.job_hub.service;
 
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Page;
 import java_spring.job_hub.dto.request.RecruiterUpdateRequest;
 import java_spring.job_hub.dto.response.RecruitersResponse;
 import java_spring.job_hub.entity.Companies;
@@ -18,6 +16,8 @@ import java_spring.job_hub.repository.RecruitersRepository;
 import java_spring.job_hub.repository.RoleRepository;
 import java_spring.job_hub.repository.UserRepository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import lombok.AccessLevel;
@@ -61,8 +61,8 @@ public class RecruitersService {
         Recruiters recruiters = recruitersRepository
                 .findByUserId(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.RECRUITER_NOT_FOUND));
-        if(!companies.getStatus().equals(CompanyStatus.APPROVED)) {
-                throw new AppException(ErrorCode.COMPANY_NOT_FOUND);
+        if (!companies.getStatus().equals(CompanyStatus.APPROVED)) {
+            throw new AppException(ErrorCode.COMPANY_NOT_FOUND);
         }
 
         recruiters.setCompanies(companies);
@@ -87,12 +87,12 @@ public class RecruitersService {
         return recruitersMapper.toRecruitersResponse(recruitersRepository.save(recruiters));
     }
 
-//    public List<RecruitersResponse> getListRecruiters() {
-//        return recruitersRepository.findAll().stream()
-//                .map(recruitersMapper::toRecruitersResponse)
-//                .toList();
-//    }
-    //Load danh sach hay hon
+    //    public List<RecruitersResponse> getListRecruiters() {
+    //        return recruitersRepository.findAll().stream()
+    //                .map(recruitersMapper::toRecruitersResponse)
+    //                .toList();
+    //    }
+    // Load danh sach hay hon
     public Page<RecruitersResponse> getListRecruiters(Pageable pageable) {
         return recruitersRepository.findAll(pageable).map(recruitersMapper::toRecruitersResponse);
     }

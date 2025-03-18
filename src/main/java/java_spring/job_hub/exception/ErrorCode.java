@@ -28,7 +28,9 @@ public enum ErrorCode {
     RECRUITER_NOT_FOUND(1016, "Recruiter not found!", HttpStatus.NOT_FOUND),
     RECRUITER_NOT_POST(1017, "Recruiter not approved to post jobs!", HttpStatus.NOT_FOUND),
     JOB_NOT_FOUND(1018, "Job not found!", HttpStatus.NOT_FOUND),
-    RECRUITER_NO_COMPANY(1018, "Requires employers to have a company!", HttpStatus.NOT_FOUND);
+    RECRUITER_NO_COMPANY(1018, "Requires employers to have a company!", HttpStatus.NOT_FOUND),
+    ALREADY_FAVORITED(1020, "You have already favorited this job!", HttpStatus.BAD_REQUEST);
+    ;
 
     ErrorCode(int code, String message, HttpStatusCode httpStatusCode) {
         this.code = code;
