@@ -1,9 +1,12 @@
 package java_spring.job_hub.service;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 import java_spring.job_hub.dto.request.JobRequest;
 import java_spring.job_hub.dto.request.JobUpdateRequest;
 import java_spring.job_hub.dto.response.JobResponse;
+import java_spring.job_hub.entity.JobTag;
 import java_spring.job_hub.entity.Jobs;
 import java_spring.job_hub.entity.Recruiters;
 import java_spring.job_hub.enums.JobsStatus;
@@ -35,6 +38,7 @@ public class JobService {
     FavoritesRepository favoritesRepository;
     RecruitersRepository recruitersRepository;
     CompaniesRepository companiesRepository;
+    JobTagRepository jobTagRepository;
 
     public JobResponse createJob(JobRequest request) {
         Jwt jwt = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -60,8 +64,23 @@ public class JobService {
         jobs.setCreateAt(LocalDate.now());
         jobs.setStatus(JobsStatus.PENDING.toString());
         jobs.setRecruiters(recruiter);
-        jobRepository.save(jobs);
+//        jobRepository.save(jobs);
+        // Xử lý tags
+        if (request.getJobTags() != null && !request.getJobTags().isEmpty()) {
+            Set<JobTag> jobTags = new HashSet<>();
+            for (String tagName : request.getJobTags()) {
+                JobTag jobTag = jobTagRepository.findByTagName(tagName)
+                        .orElseGet(() -> {
+                            JobTag newTag = new JobTag();
+                            newTag.setTagName(tagName);
+                            return jobTagRepository.save(newTag);
+                        });
+                jobTags.add(jobTag);
+            }
+            jobs.setJobTags(jobTags);
+        }
 
+        jobRepository.save(jobs);
         JobResponse response = jobMapper.toJobResponse(jobs);
         response.setApplicationCount(applicationsRepository.countApplicationsByJobId(jobs.getJobId()));
         response.setFavoriteCount(favoritesRepository.countFavoritesByJobId(jobs.getJobId()));
@@ -70,10 +89,42 @@ public class JobService {
     }
 
     public JobResponse updateJob(Integer jobId, JobUpdateRequest request) {
-        Jobs job = jobRepository.findById(jobId).orElseThrow(() -> new AppException(ErrorCode.JOB_NOT_FOUND));
+        Jobs job = jobRepository.findById(jobId)
+                .orElseThrow(() -> new AppException(ErrorCode.JOB_NOT_FOUND));
+
         jobMapper.updateJob(job, request);
 
-        return jobMapper.toJobResponse(jobRepository.save(job));
+        //jobTags
+        if (request.getJobTags() != null) { // Chỉ cập nhật nếu request có jobTags
+            Set<JobTag> currentTags = job.getJobTags() != null ? job.getJobTags() : new HashSet<>();
+            Set<JobTag> updatedTags = new HashSet<>();
+
+            // Tạo hoặc tìm các tag từ request
+            for (String tagName : request.getJobTags()) {
+                JobTag jobTag = jobTagRepository.findByTagName(tagName)
+                        .orElseGet(() -> {
+                            JobTag newTag = new JobTag();
+                            newTag.setTagName(tagName);
+                            return jobTagRepository.save(newTag);
+                        });
+                updatedTags.add(jobTag);
+            }
+
+            // Đồng bộ tags: Xóa tag cũ không còn trong request, thêm tag mới
+            currentTags.retainAll(updatedTags); // Giữ lại tag còn trong danh sách mới
+            currentTags.addAll(updatedTags);
+            job.setJobTags(currentTags);
+        }
+
+        // Lưu job đã cập nhật
+        Jobs updatedJob = jobRepository.save(job);
+
+        // Trả về response
+        JobResponse response = jobMapper.toJobResponse(updatedJob);
+        response.setApplicationCount(applicationsRepository.countApplicationsByJobId(updatedJob.getJobId()));
+        response.setFavoriteCount(favoritesRepository.countFavoritesByJobId(updatedJob.getJobId()));
+
+        return response;
     }
 
     public JobResponse getJob(Integer jobId) {

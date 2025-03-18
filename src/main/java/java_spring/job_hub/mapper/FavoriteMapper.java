@@ -11,6 +11,6 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 public interface FavoriteMapper {
 
     @Mapping(source = "user.id", target = "userId") // Nếu cần ánh xạ userId
-    @Mapping(source = "jobs.jobId", target = "jobId")  // Nếu cần ánh xạ jobId
+    @Mapping(source = "jobs.jobId", target = "jobId") // Nếu cần ánh xạ jobId
     FavoriteResponse toFavoriteResponse(Favorites favorites);
 }

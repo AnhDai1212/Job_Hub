@@ -24,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class JobController {
 
+    @Autowired
     JobService jobService;
 
     @PostMapping()
@@ -61,4 +62,5 @@ public class JobController {
         jobService.deleteJob(jobId);
         return ApiResponse.<Void>builder().message("Delete job success!").build();
     }
+
 }

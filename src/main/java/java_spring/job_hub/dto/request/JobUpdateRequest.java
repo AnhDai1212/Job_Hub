@@ -1,6 +1,7 @@
 package java_spring.job_hub.dto.request;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -17,6 +18,7 @@ public class JobUpdateRequest {
     String jobType;
     LocalDate deadline;
     String location;
+    List<String> jobTags;
     //    LocalDate createAt;
     //    String status;
     Double minSalary;

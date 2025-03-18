@@ -1,5 +1,6 @@
 package java_spring.job_hub.service;
 
+import java.util.Date;
 import java_spring.job_hub.dto.request.FavoriteRequest;
 import java_spring.job_hub.dto.response.FavoriteResponse;
 import java_spring.job_hub.entity.Favorites;
@@ -20,8 +21,6 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.Date;
 
 @Service
 @RequiredArgsConstructor
@@ -50,7 +49,8 @@ public class FavoriteService {
         }
         User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         // Tạo mới Favorite
-        Favorites favorite = Favorites.builder().user(user).jobs(job).createAt(new Date()).build();
+        Favorites favorite =
+                Favorites.builder().user(user).jobs(job).createAt(new Date()).build();
 
         // Lưu vào database
         return favoriteMapper.toFavoriteResponse(favoritesRepository.save(favorite));

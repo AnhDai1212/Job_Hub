@@ -15,8 +15,11 @@ public interface JobMapper {
 
     @Mapping(target = "jobTags", ignore = true)
     @Mapping(target = "jobCategories", ignore = true)
+    @Mapping(target = "status", ignore = true)
     @Mapping(target = "favoritesList", ignore = true)
     @Mapping(target = "applicationsList", ignore = true)
+    @Mapping(target = "companies", ignore = true)
+    @Mapping(target = "recruiters", ignore = true)
     Jobs toJob(JobRequest request);
 
     @Mapping(target = "applicationCount", ignore = true) // Không ánh xạ trực tiếp
@@ -26,5 +29,9 @@ public interface JobMapper {
     @Mapping(target = "jobTags", ignore = true)
     @Mapping(target = "jobCategories", ignore = true)
     @Mapping(target = "status", ignore = true)
+    @Mapping(target = "favoritesList", ignore = true)
+    @Mapping(target = "applicationsList", ignore = true)
+    @Mapping(target = "companies", ignore = true)
+    @Mapping(target = "recruiters", ignore = true)
     void updateJob(@MappingTarget Jobs jobs, JobUpdateRequest request);
 }

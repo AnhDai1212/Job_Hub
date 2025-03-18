@@ -1,8 +1,8 @@
 package java_spring.job_hub.repository;
 
 import java_spring.job_hub.entity.Favorites;
-
 import java_spring.job_hub.entity.Jobs;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -15,5 +15,4 @@ public interface FavoritesRepository extends JpaRepository<Favorites, Integer> {
     int countFavoritesByJobId(@Param("jobId") Integer jobId);
 
     boolean existsByUserIdAndJobs(String userId, Jobs jobs);
-
 }
