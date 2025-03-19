@@ -6,6 +6,7 @@ import java.util.Set;
 import java_spring.job_hub.dto.request.JobRequest;
 import java_spring.job_hub.dto.request.JobUpdateRequest;
 import java_spring.job_hub.dto.response.JobResponse;
+import java_spring.job_hub.entity.JobCategories;
 import java_spring.job_hub.entity.JobTag;
 import java_spring.job_hub.entity.Jobs;
 import java_spring.job_hub.entity.Recruiters;
@@ -39,6 +40,7 @@ public class JobService {
     RecruitersRepository recruitersRepository;
     CompaniesRepository companiesRepository;
     JobTagRepository jobTagRepository;
+    JobCategoriesRepository jobCategoriesRepository;
 
     public JobResponse createJob(JobRequest request) {
         Jwt jwt = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -79,6 +81,20 @@ public class JobService {
             }
             jobs.setJobTags(jobTags);
         }
+//        categories
+        if(request.getJobCategories() != null && !request.getJobCategories().isEmpty()) {
+            Set<JobCategories> jobCategoriesList = new HashSet<>();
+            for(String categoriesName : request.getJobCategories()) {
+                JobCategories jobCategories = jobCategoriesRepository.findByCategoryName(categoriesName).orElseGet(
+                        ()-> {
+                            JobCategories newCategories = new JobCategories();
+                            newCategories.setCategoryName(categoriesName);
+                            return jobCategoriesRepository.save(newCategories);
+                        });
+                jobCategoriesList.add(jobCategories);
+            }
+            jobs.setJobCategories(jobCategoriesList);
+        }
 
         jobRepository.save(jobs);
         JobResponse response = jobMapper.toJobResponse(jobs);
@@ -116,10 +132,27 @@ public class JobService {
             job.setJobTags(currentTags);
         }
 
-        // Lưu job đã cập nhật
+        if(request.getJobCategories() != null && !request.getJobCategories().isEmpty()) {
+            Set<JobCategories> currentCategories = job.getJobCategories() != null ? job.getJobCategories(): new HashSet<>();
+            Set<JobCategories> updateCategories = new HashSet<>();
+
+            for(String categoriesName : request.getJobCategories()) {
+                JobCategories jobCategories = jobCategoriesRepository.findByCategoryName(categoriesName).orElseGet(
+                        ()-> {
+                            JobCategories newCategories = new JobCategories();
+                            newCategories.setCategoryName(categoriesName);
+                            return jobCategoriesRepository.save(newCategories);
+                        }
+                );
+                updateCategories.add(jobCategories);
+            }
+            currentCategories.retainAll(updateCategories);
+            currentCategories.addAll(updateCategories);
+            job.setJobCategories(currentCategories);
+        }
+
         Jobs updatedJob = jobRepository.save(job);
 
-        // Trả về response
         JobResponse response = jobMapper.toJobResponse(updatedJob);
         response.setApplicationCount(applicationsRepository.countApplicationsByJobId(updatedJob.getJobId()));
         response.setFavoriteCount(favoritesRepository.countFavoritesByJobId(updatedJob.getJobId()));

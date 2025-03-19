@@ -19,7 +19,8 @@ public class JobRequest {
     String location;
     //    LocalDate createAt;
     //    String status;
-    private List<String> jobTags;
+    List<String> jobTags;
+    List<String> jobCategories;
     Double minSalary;
     Double maxSalary;
 }

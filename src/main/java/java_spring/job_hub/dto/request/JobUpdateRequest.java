@@ -12,13 +12,14 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class JobUpdateRequest {
-    Integer jobId;
+//    Integer jobId;
     String title;
     String descriptions;
     String jobType;
     LocalDate deadline;
     String location;
     List<String> jobTags;
+    List<String> jobCategories;
     //    LocalDate createAt;
     //    String status;
     Double minSalary;
