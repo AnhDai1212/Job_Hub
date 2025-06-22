@@ -6,6 +6,7 @@ import java_spring.job_hub.validator.DobConstraint;
 
 import jakarta.validation.constraints.Size;
 
+import java_spring.job_hub.validator.UsernameConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,6 +18,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class UserCreationRequest {
     @Size(min = 3, message = "USERNAME_INVALID")
+    @UsernameConstraint
     String username;
 
     @Size(min = 8, message = "PASSWORD_INVALID")

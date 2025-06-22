@@ -3,6 +3,8 @@ package java_spring.job_hub.exception;
 import java.nio.file.AccessDeniedException;
 import java.util.Map;
 import java.util.Objects;
+
+import jakarta.validation.ValidationException;
 import java_spring.job_hub.dto.response.ApiResponse;
 
 import jakarta.validation.ConstraintViolation;
@@ -61,40 +63,95 @@ public class GlobalExceptionHandle {
             value =
                     MethodArgumentNotValidException
                             .class) // MethodArgumentNotValidException  sẽ bắt các kiệu ValidException
+//    public ResponseEntity<ApiResponse> handlingValidation(MethodArgumentNotValidException exception) {
+//        String enumkey = exception.getFieldError().getDefaultMessage();
+//
+//        ErrorCode errorCode = ErrorCode.INVALID_KEY;
+//
+//        Map<String, Object> attributes = null;
+//        try {
+//            errorCode = ErrorCode.valueOf(enumkey);
+//
+//            var constrainViolation =
+//                    exception.getBindingResult().getAllErrors().getFirst().unwrap(ConstraintViolation.class);
+//            attributes = constrainViolation
+//                    .getConstraintDescriptor()
+//                    .getAttributes(); // lay cac param da truyen vao @constrain
+//
+//            log.info(attributes.toString());
+//
+//        } catch (IllegalArgumentException e) {
+//
+//        }
+//
+//        ApiResponse apiResponse = new ApiResponse();
+//
+//        apiResponse.setCode(errorCode.getCode());
+//        apiResponse.setMessage(
+//                Objects.nonNull(attributes)
+//                        ? mapAttribute(errorCode.getMessage(), attributes)
+//                        : errorCode.getMessage());
+//
+//        return ResponseEntity.badRequest().body(apiResponse);
+//    }
+
+//    private String mapAttribute(String message, Map<String, Object> attributes) {
+//        String minValue = attributes.get(MIN_ATTRIBUTE).toString();
+//        return message.replace("{" + MIN_ATTRIBUTE + "}", minValue);
+//    }
     public ResponseEntity<ApiResponse> handlingValidation(MethodArgumentNotValidException exception) {
-        String enumkey = exception.getFieldError().getDefaultMessage();
+        String enumKey = exception.getFieldError().getDefaultMessage();
 
         ErrorCode errorCode = ErrorCode.INVALID_KEY;
-
         Map<String, Object> attributes = null;
+
         try {
-            errorCode = ErrorCode.valueOf(enumkey);
+            // Nếu enumKey không khớp với bất kỳ ErrorCode nào thì giữ nguyên là INVALID_KEY
+            errorCode = ErrorCode.valueOf(enumKey);
 
-            var constrainViolation =
-                    exception.getBindingResult().getAllErrors().getFirst().unwrap(ConstraintViolation.class);
-            attributes = constrainViolation
-                    .getConstraintDescriptor()
-                    .getAttributes(); // lay cac param da truyen vao @constrain
+            // Lấy thông tin về annotation để lấy ra các tham số truyền vào như "min", "max", ...
+            var constraintViolation = exception.getBindingResult()
+                    .getAllErrors()
+                    .getFirst()
+                    .unwrap(ConstraintViolation.class);
 
-            log.info(attributes.toString());
+            attributes = constraintViolation.getConstraintDescriptor().getAttributes();
 
-        } catch (IllegalArgumentException e) {
-
+            log.info("Constraint attributes: {}", attributes);
+        } catch (IllegalArgumentException | ValidationException e) {
+            log.warn("Không tìm thấy ErrorCode phù hợp hoặc unwrap thất bại: {}", e.getMessage());
         }
 
         ApiResponse apiResponse = new ApiResponse();
-
         apiResponse.setCode(errorCode.getCode());
-        apiResponse.setMessage(
-                Objects.nonNull(attributes)
-                        ? mapAttribute(errorCode.getMessage(), attributes)
-                        : errorCode.getMessage());
+
+        // Nếu message chứa {min}, {max}, ... thì thay thế bằng giá trị tương ứng, ngược lại giữ nguyên
+        String finalMessage = errorCode.getMessage();
+        if (attributes != null) {
+            finalMessage = mapAttribute(errorCode.getMessage(), attributes);
+        }
+
+        apiResponse.setMessage(finalMessage);
 
         return ResponseEntity.badRequest().body(apiResponse);
     }
 
     private String mapAttribute(String message, Map<String, Object> attributes) {
-        String minValue = attributes.get(MIN_ATTRIBUTE).toString();
-        return message.replace("{" + MIN_ATTRIBUTE + "}", minValue);
+        if (attributes == null || attributes.isEmpty()) {
+            return message;
+        }
+
+        // Thay thế tất cả các placeholder dạng {key} trong message nếu có trong attributes
+        for (Map.Entry<String, Object> entry : attributes.entrySet()) {
+            String placeholder = "{" + entry.getKey() + "}";
+            if (message.contains(placeholder)) {
+                String value = entry.getValue() != null ? entry.getValue().toString() : "";
+                message = message.replace(placeholder, value);
+            }
+        }
+
+        return message;
     }
+
+
 }
